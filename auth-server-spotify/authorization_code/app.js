@@ -13,9 +13,9 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = 'CLIENT_ID'; // Your client id
-var client_secret = 'CLIENT_SECRET'; // Your secret
-var redirect_uri = 'REDIRECT_URI'; // Your redirect uri
+var client_id = 'd0525be4c5f740699430e39162f29ca4'; // Your client id
+var client_secret = '846a8c90ce324b1cae5596c150585d64'; // Your secret
+var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -46,7 +46,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = 'user-read-private user-read-email'; //permissions
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -66,7 +66,7 @@ app.get('/callback', function(req, res) {
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
 
-  if (state === null || state !== storedState) {
+  if (state === null || state !== storedState) { //state mismatch error
     res.redirect('/#' +
       querystring.stringify({
         error: 'state_mismatch'
@@ -80,11 +80,11 @@ app.get('/callback', function(req, res) {
         redirect_uri: redirect_uri,
         grant_type: 'authorization_code'
       },
-      headers: {
+      headers: { //HTTP headers
         'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
       },
       json: true
-    };
+      };
 
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
@@ -109,7 +109,7 @@ app.get('/callback', function(req, res) {
             access_token: access_token,
             refresh_token: refresh_token
           }));
-      } else {
+      } else { //response failure
         res.redirect('/#' +
           querystring.stringify({
             error: 'invalid_token'
@@ -119,6 +119,7 @@ app.get('/callback', function(req, res) {
   }
 });
 
+//refresh access token
 app.get('/refresh_token', function(req, res) {
 
   // requesting access token from refresh token
@@ -134,7 +135,7 @@ app.get('/refresh_token', function(req, res) {
   };
 
   request.post(authOptions, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
+    if (!error && response.statusCode === 200) { //response success
       var access_token = body.access_token;
       res.send({
         'access_token': access_token
