@@ -6,16 +6,6 @@ var redirect_uri = 'http://localhost:8888/spotify/callback'; // Your redirect ur
 
 var scope = 'user-read-private user-read-email'; //permissions
 
-function getHashParams() {
-    var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-        q = window.location.hash.substring(1);
-    while (e = r.exec(q)) {
-        hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
-    return hashParams;
-}
-
 function getAuthOptions(code) { //access token authorization options
     return {
         url: 'https://accounts.spotify.com/api/token',
@@ -54,7 +44,6 @@ function getAuthQueryString(state) { //login & redirection options
 }
 
 module.exports = { //for external use of functions
-    getHashParams: getHashParams,
     getAuthOptions: getAuthOptions,
     getAuthOptionsRefresh: getAuthOptionsRefresh,
     getAuthQueryString: getAuthQueryString

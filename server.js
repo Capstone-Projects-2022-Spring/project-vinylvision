@@ -120,21 +120,14 @@ app.get('/spotify/callback', function (req, res) {
     }
 });
 
-//return access token
-app.get('/spotify/token', (req, res) => {
-    res.json({
-        access_token: access_token
-    })
-})
-
 //refresh access token
 app.get('/spotify/refresh_token', function (req, res) {
 
     // requesting access token from refresh token
     var refresh_token = req.query.refresh_token;
-    var authOptions = spotify.getAuthOptionsRefresh(refresh_token)
+    var authOptionsRefresh = spotify.getAuthOptionsRefresh(refresh_token);
 
-    request.post(authOptions, function (error, response, body) {
+    request.post(authOptionsRefresh, function (error, response, body) {
         if (!error && response.statusCode === 200) { //response success
             var access_token = body.access_token;
             res.send({
