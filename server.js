@@ -7,6 +7,7 @@ var serverPORT = 8888
 
 var projectUrl = 'http://localhost:8888';
 const spotify = require('./spotify.js');
+const fs = require('fs');
 
 /**
  * Generates a random string containing numbers and letters
@@ -31,8 +32,28 @@ app.use(express.static(__dirname + '/public'))
     .use(cors())
     .use(cookieParser());
 
+html = {
+    render(path, response) {
+        fs.readFile(path, null, function (error, data) {
+            if (error) {
+                response.writeHead(404);
+                respone.write('file not found');
+            } else {
+                response.write(data);
+            }
+            response.end();
+        });
+    }
+}
+
+//spotify player homepage
+app.get('/spotify', function (req, res) {
+    html.render('./public/spotify-player.html', res);
+});
+
+//req: request, res: response
 //send to spotify's site to authorize user with options to return to vinylvision site
-app.get('/login', function (req, res) {
+app.get('/spotify/login', function (req, res) {
 
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
@@ -42,8 +63,13 @@ app.get('/login', function (req, res) {
         spotify.getAuthQueryString(state));
 });
 
+//send to spotify's site to authorize user with options to return to vinylvision site
+app.get('/spotify/logout', function (req, res) {
+    res.redirect('/');
+});
+
 //callback redirection function
-app.get('/callback', function (req, res) {
+app.get('/spotify/callback', function (req, res) {
 
     // your application requests refresh and access tokens
     // after checking the state parameter
@@ -79,7 +105,7 @@ app.get('/callback', function (req, res) {
                 });
 
                 // we can also pass the token to the browser to make requests from there
-                res.redirect(projectUrl + '/#' +
+                res.redirect(projectUrl + '/spotify/#' +
                     querystring.stringify({
                         access_token: access_token,
                         refresh_token: refresh_token
@@ -94,8 +120,15 @@ app.get('/callback', function (req, res) {
     }
 });
 
+//return access token
+app.get('/spotify/token', (req, res) => {
+    res.json({
+        access_token: access_token
+    })
+})
+
 //refresh access token
-app.get('/refresh_token', function (req, res) {
+app.get('/spotify/refresh_token', function (req, res) {
 
     // requesting access token from refresh token
     var refresh_token = req.query.refresh_token;
@@ -112,4 +145,5 @@ app.get('/refresh_token', function (req, res) {
 });
 
 console.log('Listening on ' + serverPORT);
+//app.createServer(router.handleRequest).listen(serverPORT);
 app.listen(serverPORT);

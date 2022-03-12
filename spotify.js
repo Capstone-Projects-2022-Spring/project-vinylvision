@@ -2,9 +2,19 @@
 
 var client_id = 'd0525be4c5f740699430e39162f29ca4'; // Your client id
 var client_secret = '846a8c90ce324b1cae5596c150585d64'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:8888/spotify/callback'; // Your redirect uri
 
 var scope = 'user-read-private user-read-email'; //permissions
+
+function getHashParams() {
+    var hashParams = {};
+    var e, r = /([^&;=]+)=?([^&;]*)/g,
+        q = window.location.hash.substring(1);
+    while (e = r.exec(q)) {
+        hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+}
 
 function getAuthOptions(code) { //access token authorization options
     return {
@@ -44,6 +54,7 @@ function getAuthQueryString(state) { //login & redirection options
 }
 
 module.exports = { //for external use of functions
+    getHashParams: getHashParams,
     getAuthOptions: getAuthOptions,
     getAuthOptionsRefresh: getAuthOptionsRefresh,
     getAuthQueryString: getAuthQueryString
