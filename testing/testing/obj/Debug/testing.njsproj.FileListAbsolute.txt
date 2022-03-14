@@ -1,0 +1,3 @@
+C:\Users\Tepex\Desktop\testing\testing\obj\Debug\testing.njsproj.AssemblyReference.cache
+C:\Users\Tepex\Desktop\testing\testing\obj\Debug\testing.njsproj.CoreCompileInputs.cache
+C:\Users\Tepex\Desktop\testing\testing\bin\Microsoft.NodejsTools.WebRole.dll
