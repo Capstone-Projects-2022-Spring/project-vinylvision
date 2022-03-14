@@ -9,7 +9,6 @@ function App() {
         <h1>VinylVision</h1>
       </nav>
       <Login />
-      <Vision />
     </div>
   );
 }
