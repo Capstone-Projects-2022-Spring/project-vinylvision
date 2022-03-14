@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <title>VinylVision</title>
+</head>
+
+<body>
+    <h1>
+        VinylVision Spotify Album Player
+    </h1>
+
+    <div id="tokens">
+        <h2>Tokens</h2>
+        <dl>
+            <dt>Access Token</dt>
+            <dd id="access-token">token1</dd>
+            <dt>Refresh Token</dt>
+            <dd id="refresh-token">token2</dd>
+        </dl>
+    </div>
+
+    <div id="logout">
+        <a href="/spotify/logout">Back</a>
+    </div>
+
+    <script>
+        (function () {
+
+            /**
+             * Obtains parameters from the hash of the URL
+             * @return Object
+             */
+            function getHashParams() {
+                var hashParams = {};
+                var e, r = /([^&;=]+)=?([^&;]*)/g,
+                    q = window.location.hash.substring(1);
+                while (e = r.exec(q)) {
+                    hashParams[e[1]] = decodeURIComponent(e[2]);
+                }
+                return hashParams;
+            }
+
+            var params = getHashParams();
+
+            var access_token = params.access_token,
+                refresh_token = params.refresh_token,
+                error = params.error;
+
+            if (error) {
+                alert('There was an error during the authentication');
+            } else {
+                if (access_token) {
+                    document.getElementById('access-token').innerHTML = access_token.toString();
+                    document.getElementById('refresh-token').innerHTML = refresh_token.toString();
+                }
+            }
+        })();
+    </script>
+</body>
+</html>
+
