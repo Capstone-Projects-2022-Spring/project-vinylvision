@@ -1,70 +1,12 @@
-# Getting Started with Create React App
+# VinylVision
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+VinylVision is a web application that enables users to discover unknown music in multiple ways. Namely, a user can find music they do not recognize by supplying an image of an album’s artwork or a brief audio recording of a song. With the help of novel image and audio recognition technologies, the service will obtain information about the song or album the user is looking for, such as song title, album title, artist name, etc. Using these recovered details, VinylVision will search for the song or album in either Spotify or Apple Music, depending on the preference of the user. If the search is successful, the application will provide the user with a mini player allowing them to listen to snippets of songs from the album they were looking for. To listen to the songs in full, the user can choose to be redirected to their preferred music player application. Additionally, the service will recommend albums similar to the one the user was searching for, offering another opportunity for users to come across new music.
 
-## Available Scripts
+Users will be able to input an image or audio recording in two ways. Moreover, if a user allows VinylVision to access their device’s camera and microphone, the user could capture an image or record audio to submit to the service. A user could also upload an image or audio file already stored on their device.
 
-In the project directory, you can run:
+If a user inputs an image containing album artwork, VinylVision will send it to Google’s Cloud Vision API. This image recognition API will respond to VinylVision with details of the album, e.g., album title, artist name. Then, VinylVision will send these details to either Spotify’s or Apple Music’s API. These APIs allow VinylVision to search Spotify or Apple Music for the user’s desired album using the details recovered from the Cloud Vision API. They will then respond to VinylVision with the mini player and album recommendations.
 
-### `npm start`
+The data flow is similar if a user inputs audio. VinylVision will send the audio data to the AudD Music Recognition API. This API will analyze the song in the audio provided by the user, and respond to VinylVision details such as song title, artist name, album name, etc. At this point, the flow of data is the same as when an image is used as input. VinylVision sends the newly obtained details to the Spotify or Apple Music API, which will respond with the mini player and album recommendations. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Team Members
+Anthony Guerrelli, John Crane, Robert Morsa, Mikhail Sajed, Andrew Pari
