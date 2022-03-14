@@ -75,6 +75,9 @@ function sendFileToCloudVision (content) {
  * Displays the results.
  */
 function displayJSON (data) {
+  if (!data) {
+    
+  }
   var data2 = ('Your album cover is: \t' + data.responses[0].webDetection.bestGuessLabels[0].label);
   console.log(data2);
   var contents = JSON.stringify(data, null, 5);
