@@ -3,7 +3,7 @@ import React from 'react'
 
 function Login() {
     const CLIENT_ID = "d0525be4c5f740699430e39162f29ca4";
-    const REDIRECT_URI = "https://tu-vinylvision.firebaseapp.com";
+    const REDIRECT_URI = "https://tu-vinylvision.web.app";
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
     const RESPONSE_TYPE = "token";
     const SHOW_DIALOG = "true";
