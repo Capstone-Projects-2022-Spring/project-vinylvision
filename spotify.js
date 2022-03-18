@@ -6,6 +6,49 @@ var redirect_uri = 'http://localhost:8888/spotify/callback'; // Your redirect ur
 
 var scope = 'user-read-private user-read-email'; //permissions
 
+/*function callApi(method, url, body, callback, access_token) {
+    let xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + access_token);
+    xhr.send(body);
+    xhr.onload = callback;
+}
+
+function search() {
+    return callApi("GET", )
+}*/
+
+/**
+             * Obtains parameters from the hash of the URL
+             * @return Object
+             */
+function getHashParams() {
+    var hashParams = {};
+    var e, r = /([^&;=]+)=?([^&;]*)/g,
+        q = window.location.hash.substring(1);
+    while (e = r.exec(q)) {
+        hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+}
+
+function searchAlbums(query) {
+    $.ajax({
+        url: 'https://api.spotify.com/v1/search',
+        data: {
+            q: query,
+            type: 'album'
+        },
+        headers: {
+            'Authorization' : 'Bearer' + getHashParams()
+        },
+        success: function (response) {
+            resultsPlaceholder.innerHTML = template(response);
+        }
+    });
+};
+
 function getAuthOptions(code) { //access token authorization options
     return {
         url: 'https://accounts.spotify.com/api/token',
@@ -44,6 +87,7 @@ function getAuthQueryString(state) { //login & redirection options
 }
 
 module.exports = { //for external use of functions
+    searchAlbums: searchAlbums,
     getAuthOptions: getAuthOptions,
     getAuthOptionsRefresh: getAuthOptionsRefresh,
     getAuthQueryString: getAuthQueryString
