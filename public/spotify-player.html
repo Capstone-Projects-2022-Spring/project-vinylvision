@@ -20,14 +20,14 @@
         </dl>
     </div>
 
-    <form>
-        <label for="search_tags">Search:</label>
-        <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess"><br><br>
-        <input type="button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
-    </form>
+    <label for="search_tags">Search:</label>
+    <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+    <input type="button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
     <br><br>
+    <label for="artist" id="artist_text">Artist:</label>
+    <input name="artist" id="artist" readonly style="width:400px"><br><br>
     <label for="album_name">Album:</label>
-    <input name="album_name" id="album_name" readonly><br><br>
+    <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
     <label for="tracks">Tracks:</label>
     <select name="tracks" id="tracks">
     </select>
@@ -66,6 +66,15 @@
                     //console.log(response.albums)
                     console.log(response.albums.items[0])
                     console.log(response.albums.items[0].name)
+                    //get artist names
+                    var artistDiv = document.getElementById("artist")
+                    artistDiv.value = response.albums.items[0].artists[0].name
+                    document.getElementById("artist_text").innerHTML = "Artist:"
+                    for (let i = 1; i < response.albums.items[0].artists.length; i++) {
+                        document.getElementById("artist_text").innerHTML = "Artists:"
+                        artistDiv.value += ", " + response.albums.items[0].artists[i].name
+                    }
+                    
                     document.getElementById("album_name").value = response.albums.items[0].name
                     fetchTracks(response.albums.items[0].id, accessToken)
                 }
