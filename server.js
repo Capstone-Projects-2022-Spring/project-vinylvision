@@ -3,11 +3,12 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-var serverPORT = 8888
-
-var projectUrl = 'http://localhost:8888';
-const spotify = require('./spotify.js');
 const fs = require('fs');
+
+require('dotenv').config(); //for loading from env file
+var serverPORT = process.env.PORT
+var projectUrl = process.env.PROJECT_URL;
+const spotify = require('./spotify.js');
 
 /**
  * Generates a random string containing numbers and letters
@@ -65,6 +66,8 @@ app.get('/spotify/login', function (req, res) {
 
 //send to spotify's site to authorize user with options to return to vinylvision site
 app.get('/spotify/logout', function (req, res) {
+    res.clearCookie('spotifyAccessToken');
+    res.clearCookie('spotifyRefreshToken');
     res.redirect('/');
 });
 
@@ -90,26 +93,9 @@ app.get('/spotify/callback', function (req, res) {
         request.post(authOptions, function (error, response, body) { //access token request
             if (!error && response.statusCode === 200) {
 
-                var access_token = body.access_token,
-                    refresh_token = body.refresh_token;
+                spotify.setCookies(res, body) //store cookies for access and refresh token
 
-                var options = {
-                    url: 'https://api.spotify.com/v1/me',
-                    headers: { 'Authorization': 'Bearer ' + access_token },
-                    json: true
-                };
-
-                // use the access token to access the Spotify Web API
-                request.get(options, function (error, response, body) {
-                    console.log(body);
-                });
-
-                // we can also pass the token to the browser to make requests from there
-                res.redirect(projectUrl + '/spotify/#' +
-                    querystring.stringify({
-                        access_token: access_token,
-                        refresh_token: refresh_token
-                    }));
+                res.redirect(projectUrl + '/spotify');
             } else { //response failure
                 res.redirect('/#' +
                     querystring.stringify({

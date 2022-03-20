@@ -10,16 +10,6 @@
         VinylVision Spotify Album Player
     </h1>
 
-    <div id="tokens">
-        <h2>Tokens</h2>
-        <dl>
-            <dt>Access Token</dt>
-            <dd id="access-token">token1</dd>
-            <dt>Refresh Token</dt>
-            <dd id="refresh-token">token2</dd>
-        </dl>
-    </div>
-
     <div id="search">
         <label for="search_tags">Search:</label>
         <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
@@ -44,6 +34,21 @@
     </div>
 
     <script>
+        function getCookie(cname) {
+            let name = cname + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
         function getHashParams() {
             var hashParams = {};
             var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -56,8 +61,7 @@
 
         function searchAlbums(query) {
             if (query == "") return; //if empty, can require search tags, but dont need to
-            //console.log(query)
-            accessToken = getHashParams().access_token
+            //console.log(getCookie('spotifyAccessToken'))
             $.ajax({
                 url: 'https://api.spotify.com/v1/search',
                 data: {
@@ -66,7 +70,7 @@
                     limit: 5
                 },
                 headers: {
-                    'Authorization': 'Bearer ' + accessToken
+                    'Authorization': 'Bearer ' + getCookie('spotifyAccessToken')
                 },
                 success: function (response) {
                     //console.log(response.albums)
@@ -86,19 +90,19 @@
                         artistDiv.value += ", " + response.albums.items[0].artists[i].name
                     }
 
-                    fetchTracks(response.albums.items[0].id, accessToken)
+                    fetchTracks(response.albums.items[0].id)
                 }
             });
         };
 
-        function fetchTracks(albumId, accessToken) {
+        function fetchTracks(albumId) {
             $.ajax({
                 url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
                 data: {
                     limit: 50
                 },
                 headers: {
-                    'Authorization': 'Bearer ' + accessToken
+                    'Authorization': 'Bearer ' + getCookie('spotifyAccessToken')
                 },
                 success: function (response) {
                     console.log(response)
@@ -116,11 +120,17 @@
         };
 
         function playAlbum() {
-            window.open(document.getElementById("album_name").getAttribute("data-url"), "_blank")
+            var dataUrl = document.getElementById("album_name").getAttribute("data-url")
+            if (dataUrl) {
+                window.open(dataUrl, "_blank")
+            }
         }
 
         function playTrack() {
-            window.open(document.getElementById("tracks").value, "_blank")
+            var dataUrl = document.getElementById("tracks").value
+            if (dataUrl) {
+                window.open(dataUrl, "_blank")
+            }
         }
 
         //impossible to use without premium
@@ -146,38 +156,6 @@
                 }
             });
         }*/
-
-        (function () {
-
-            /**
-             * Obtains parameters from the hash of the URL
-             * @return Object
-             */
-            function getHashParams() {
-                var hashParams = {};
-                var e, r = /([^&;=]+)=?([^&;]*)/g,
-                    q = window.location.hash.substring(1);
-                while (e = r.exec(q)) {
-                    hashParams[e[1]] = decodeURIComponent(e[2]);
-                }
-                return hashParams;
-            }
-
-            var params = getHashParams();
-
-            var access_token = params.access_token,
-                refresh_token = params.refresh_token,
-                error = params.error;
-
-            if (error) {
-                alert('There was an error during the authentication');
-            } else {
-                if (access_token) {
-                    document.getElementById('access-token').innerHTML = access_token.toString();
-                    document.getElementById('refresh-token').innerHTML = refresh_token.toString();
-                }
-            }
-        })();
     </script>
 </body>
 </html>
