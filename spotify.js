@@ -7,36 +7,6 @@ var redirect_uri = process.env.PROJECT_URL + '/spotify/callback'; // Your redire
 
 var scope = 'user-read-private user-read-email'; //permissions
 
-/**
-  * Obtains parameters from the hash of the URL
-  * @return Object
-  */
-function getHashParams() {
-    var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-        q = window.location.hash.substring(1);
-    while (e = r.exec(q)) {
-        hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
-    return hashParams;
-}
-
-function searchAlbums(query) {
-    $.ajax({
-        url: 'https://api.spotify.com/v1/search',
-        data: {
-            q: query,
-            type: 'album'
-        },
-        headers: {
-            'Authorization' : 'Bearer' + getHashParams()
-        },
-        success: function (response) {
-            resultsPlaceholder.innerHTML = template(response);
-        }
-    });
-};
-
 function setCookies(res, data) {
     let spotifyAccessOptions = {
         // Spotify sends token in seconds, express wants milliseconds
@@ -87,7 +57,6 @@ function getAuthQueryString(state) { //login & redirection options
 }
 
 module.exports = { //for external use of functions
-    searchAlbums: searchAlbums,
     setCookies: setCookies,
     getAuthOptions: getAuthOptions,
     getAuthOptionsRefresh: getAuthOptionsRefresh,
