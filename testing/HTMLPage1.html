@@ -1,4 +1,4 @@
-﻿<html lang="en">
+﻿<html>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +9,8 @@
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
             crossorigin="anonymous"></script>
 </head>
+
+
 <body>
     <div>
         <h5>Select a file</h5>
@@ -27,8 +29,6 @@
     </div>
 
     <script>
-
-
         const input = document.querySelector("#audio-input");
         var file = null;
 
@@ -41,7 +41,7 @@
                 var postData = new FormData();
                 postData.append('api_token', '7c1042cd5831c7c617a466cdf3f6c1a4');
                 postData.append('file', file);
-                postData.append('return', 'apple_music,spotify');
+                postData.append('return', 'spotify');
 
                 result = document.querySelector('#result');
                 result.innerHTML = 'Working...'
