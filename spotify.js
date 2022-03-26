@@ -1,5 +1,6 @@
-﻿var querystring = require('querystring');
-require('dotenv').config(); //for loading from env file
+﻿//var querystring = require('querystring');
+//require('dotenv').config(); //for loading from env file
+//import 'dotenv/config'
 
 var client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
 var client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
@@ -47,7 +48,7 @@ function getAuthOptionsRefresh(refresh_token) { //refresh access token options
 }
 
 function getAuthQueryString(state) { //login & redirection options
-    return querystring.stringify({
+    return JSON.stringify({
         response_type: 'code',
         client_id: client_id,
         scope: scope,

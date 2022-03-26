@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <title>VinylVision</title>
+    <script src="../spotify.js"></script>
+    <script src="../spotifyLogin.js"></script>
 </head>
 <body>
     <h1>
@@ -13,6 +15,10 @@
     </p1>
     <div id="login">
         <a href="spotify/login" type="button">Login with Spotify</a>
+    </div>
+
+    <div class="container">
+        <input class="btn btn-primary btn-large" type="button" onclick="requestAuthorization()" value="Log In to Spotify">
     </div>
 </body>
 </html>

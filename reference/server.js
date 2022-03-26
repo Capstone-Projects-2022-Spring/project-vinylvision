@@ -8,7 +8,7 @@ const fs = require('fs');
 require('dotenv').config(); //for loading from env file
 var serverPORT = process.env.PORT
 var projectUrl = process.env.PROJECT_URL;
-const spotify = require('./spotify.js');
+const spotify = require('../spotify.js');
 
 /**
  * Generates a random string containing numbers and letters
