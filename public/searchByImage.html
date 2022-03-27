@@ -21,12 +21,14 @@
 <div class="centerText">
     <div>
         <form id="fileform" action="">
-            <select name="type">
+            <select name="type" id="hidden">
                 s
                 <option value="WEB_DETECTION">WEB_DETECTION</option>
             </select><br />
-            <input type="file" name="fileField"><br /><br />
-            <input type="submit" name="submit" value="Submit">
+            <p class="centerHeader">Select an image</p>
+            <input type="file" name="fileField" accept=".jpg"><br /><br />
+            <label for="hidden2">Submit</label>
+            <input type="submit" name="submit" value="Submit" id = hidden2>
         </form>
 
         <code style="white-space:pre" id="results"></code>
