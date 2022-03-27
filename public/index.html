@@ -1,18 +1,36 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script type="text/javascript" src="./key.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+
     <title>VinylVision</title>
 </head>
 <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <h1>
         VinylVision
     </h1>
-    <p1>
-        I guess this is the initial design
-    </p1>
+    <div>
+        <form id="fileform" action="">
+            <select name="type">
+                <option value="WEB_DETECTION">WEB_DETECTION</option>
+            </select><br />
+            <input type="file" name="fileField"><br /><br />
+            <input type="submit" name="submit" value="Submit">
+        </form>
+
+        <code style="white-space:pre" id="results"></code>
+    </div><br />
+
     <div id="login">
-        <a href="spotify/login" type="button">Login with Spotify</a>
+        
     </div>
 </body>
 </html>

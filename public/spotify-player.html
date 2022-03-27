@@ -50,6 +50,15 @@
             return "";
         }
 
+        var guess = getCookie("guess")
+
+        if (guess != "") {
+            document.getElementById('search_tags').value = guess
+            searchAlbums(guess)
+            document.cookie = "guess= "
+        }
+        guess = null
+
         //search for an album with the tags from query
         function searchAlbums(query) {
             if (query == "") return; //if empty, can require search tags, but dont need to
