@@ -5,12 +5,33 @@
     <link rel="stylesheet" href="../src/index.css">
     <meta name="theme-color" content="#000000" />
     <title>VinylVision</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script type="text/javascript" src="./key.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 
 <body style = background-color:#FFFFFF>
 <img src="../public/logo.jpg" alt="logo" class="center"/>
-
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="root"></div>
 <div class="centerText">
+    <div>
+        <form id="fileform" action="">
+            <select name="type">
+                s
+                <option value="WEB_DETECTION">WEB_DETECTION</option>
+            </select><br />
+            <input type="file" name="fileField"><br /><br />
+            <input type="submit" name="submit" value="Submit">
+        </form>
+
+        <code style="white-space:pre" id="results"></code>
+    </div>
+
 </div>
 </body>
 </html>
