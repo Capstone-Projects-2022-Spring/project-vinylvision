@@ -1,6 +1,6 @@
 function Hello() {
     var data = {
-    'api_token': 'c9406b4f36456e3730cf2cf10c7d5348',
+    'api_token': '7c1042cd5831c7c617a466cdf3f6c1a4',
     'url': 'https://audd.tech/example.mp3',
     'return': 'apple_music,spotify',
 };
