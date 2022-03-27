@@ -28,12 +28,26 @@
         <select name="tracks" id="tracks"></select><br><br>
         <input type="button" onclick="playTrack()" value="Play Track" />
     </div>
-
+    <br>
     <div id="logout">
         <a href="/spotify/logout">Logout</a>
     </div>
 
     <script>
+        /**
+          * Obtains parameters from the hash of the URL
+          * @return Object
+          */
+        function getHashParams() {
+            var hashParams = {};
+            var e, r = /([^&;=]+)=?([^&;]*)/g,
+                q = window.location.hash.substring(1);
+            while (e = r.exec(q)) {
+                hashParams[e[1]] = decodeURIComponent(e[2]);
+            }
+            return hashParams;
+        }
+
         //get cookie with name cname
         function getCookie(cname) {
             let name = cname + "=";
@@ -50,14 +64,12 @@
             return "";
         }
 
-        var guess = getCookie("guess")
-
+        //check if there's a guess in the parameters and autofill in the fields
+        var guess = getHashParams().guess
         if (guess != "") {
             document.getElementById('search_tags').value = guess
             searchAlbums(guess)
-            document.cookie = "guess= "
         }
-        guess = null
 
         //search for an album with the tags from query
         function searchAlbums(query) {

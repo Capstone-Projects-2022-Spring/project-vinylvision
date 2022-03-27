@@ -25,6 +25,8 @@ var generateRandomString = function (length) {
     return text;
 };
 
+var guess = "";
+
 var stateKey = 'spotify_auth_state';
 
 var app = express();
@@ -47,6 +49,20 @@ html = {
     }
 }
 
+/**
+  * Obtains parameters from the hash of the URL
+  * @return Object
+  */
+function getHashParams() {
+    var hashParams = {};
+    var e, r = /([^&;=]+)=?([^&;]*)/g,
+        q = window.location.hash.substring(1);
+    while (e = r.exec(q)) {
+        hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+}
+
 //spotify player homepage
 app.get('/spotify', function (req, res) {
     html.render('./public/spotify-player.html', res);
@@ -55,6 +71,8 @@ app.get('/spotify', function (req, res) {
 //req: request, res: response
 //send to spotify's site to authorize user with options to return to vinylvision site
 app.get('/spotify/login', function (req, res) {
+
+    guess = getHashParams().guess //store guess to send to redirect
 
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
@@ -95,7 +113,12 @@ app.get('/spotify/callback', function (req, res) {
 
                 spotify.setCookies(res, body) //store cookies for access and refresh token
 
-                res.redirect(projectUrl + '/spotify');
+                if (guess != "") { //send guess to redirect
+                    res.redirect(projectUrl + '/spotify#guess=' + guess);
+                }else { //in case there's no guess
+                    res.redirect(projectUrl + '/spotify');
+                }
+                
             } else { //response failure
                 res.redirect('/#' +
                     querystring.stringify({

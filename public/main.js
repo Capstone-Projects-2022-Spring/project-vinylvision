@@ -79,13 +79,14 @@ function displayJSON(data) {
     if (!data) {
 
     }
-    var data2 = ('Your album cover is: \t' + data.responses[0].webDetection.bestGuessLabels[0].label);
+    var label = data.responses[0].webDetection.bestGuessLabels[0].label
+    var data2 = ('Your album cover is: \t' + label);
     console.log(data2);
     var contents = JSON.stringify(data, null, 5);
     $('#results').text(data2);
     var evt = new Event('results-displayed');
     evt.results = contents;
     document.dispatchEvent(evt);
-    document.cookie = "guess=" + data.responses[0].webDetection.bestGuessLabels[0].label
-    document.getElementById('login').innerHTML = "<a href='spotify/login' type='button'>Search with Spotify</a>"
+    //add spotify login div with the label from google vision as a parameter in url
+    document.getElementById('login').innerHTML = `<a href='spotify/login#guess=${label}' type='button'>Search with Spotify</a>`
 }
