@@ -90,7 +90,7 @@
                 success: function (response) {
                     //console.log(response.albums)
                     var album = response.albums.items[0]
-                    console.log(album)
+                    //console.log(album)
                     //console.log(album.name)
                     document.getElementById("imageDiv").innerHTML = `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px'>`
 

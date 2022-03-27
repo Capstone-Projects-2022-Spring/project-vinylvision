@@ -89,5 +89,5 @@ function displayJSON(data) {
   evt.results = contents;
   document.dispatchEvent(evt);
     //add spotify login div with the label from google vision as a parameter in url
-    document.getElementById('login').innerHTML = `<a href='spotify/login#guess=${label}' type='button'>Search with Spotify</a>`
+    document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${label}' type='button'>Search with Spotify</a>`
 }

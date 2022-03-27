@@ -25,7 +25,7 @@ var generateRandomString = function (length) {
     return text;
 };
 
-var guess = "";
+var guessVar = "";
 
 var stateKey = 'spotify_auth_state';
 
@@ -49,18 +49,17 @@ html = {
     }
 }
 
-/**
-  * Obtains parameters from the hash of the URL
-  * @return Object
-  */
-function getHashParams() {
-    var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-        q = window.location.hash.substring(1);
-    while (e = r.exec(q)) {
-        hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
-    return hashParams;
+function parseQueryString(query) {
+    var parsed = {};
+
+    query.replace(
+        new RegExp('([^?=&]+)(=([^&]*))?', 'g'),
+        function ($0, $1, $2, $3) {
+            parsed[decodeURIComponent($1)] = decodeURIComponent($3);
+        }
+    );
+
+    return parsed;
 }
 
 //spotify player homepage
@@ -72,7 +71,18 @@ app.get('/spotify', function (req, res) {
 //send to spotify's site to authorize user with options to return to vinylvision site
 app.get('/spotify/login', function (req, res) {
 
-    guess = getHashParams().guess //store guess to send to redirect
+    var state = generateRandomString(16);
+    res.cookie(stateKey, state);
+
+    // your application requests authorization
+    res.redirect('https://accounts.spotify.com/authorize?' +
+        spotify.getAuthQueryString(state));
+});
+
+//send to spotify's site and check for has parameter in the format /spotify/login/:search?guess=someResponse
+app.get('/spotify/login/:search', function (req, res) {
+
+    guessVar = req.query.guess //store guess to send to redirect
 
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
@@ -113,8 +123,8 @@ app.get('/spotify/callback', function (req, res) {
 
                 spotify.setCookies(res, body) //store cookies for access and refresh token
 
-                if (guess != "") { //send guess to redirect
-                    res.redirect(projectUrl + '/spotify#guess=' + guess);
+                if (guessVar != "") { //send guess to redirect
+                    res.redirect(projectUrl + '/spotify#guess=' + guessVar);
                 }else { //in case there's no guess
                     res.redirect(projectUrl + '/spotify');
                 }
