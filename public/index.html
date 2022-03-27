@@ -68,7 +68,7 @@
                 <input type="file" accept=".mp3" id="audio-input" class="form-control form-control-sm" />
             </div>
             <div class="col">
-                <button class="btn btn-sm btn-primary" onclick="submit()">Submit</button>
+                <button class="btn btn-sm btn-primary" onclick="submit()">Upload</button>
             </div>
         </div>
 
@@ -106,6 +106,10 @@
 
                         result.innerHTML =
                             `<table class="table">
+				   	<tr>
+					    <td>Song Title</td>
+					    <td class="text-primary">${response.result.title}</td>
+					</tr>
                                         <tr>
                                             <td>Album</td>
                                             <td class="text-primary">${response.result.album}</td>
