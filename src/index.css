@@ -15,13 +15,14 @@ code {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 100px;
+  margin-top: 50px;
   width: 50%;
 }
 .centerText {
   margin-top: 5%;
   margin-left: 25%;
   margin-right: 25%;
+  text-align: center;
 }
 .button {
   background-color: #00dcdf;
@@ -40,4 +41,65 @@ code {
   color: #00dcdf;
   border: 2px solid #00dcdf;
 }
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
 
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.centerHeader
+{
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 32px;
+}
+.buttonSmall{
+  background-color: #00dcdf;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 24px;
+  margin: 20px;
+  transition-duration: 0.4s;
+  border: 2px solid #00dcdf;
+
+}
+.buttonSmall:hover {
+  background-color: white;
+  color: #00dcdf;
+  border: 2px solid #00dcdf;
+}
+/*#audio-input {*/
+/*  opacity: 0;*/
+/*  position: absolute;*/
+/*  z-index: -1;*/
+/*}*/
+/*label {*/
+/*  cursor: pointer;*/
+/*  background-color: #00dcdf;*/
+/*  color: white;*/
+/*  padding: 10px 10px;*/
+/*  text-align: center;*/
+/*  text-decoration: none;*/
+/*  display: inline-block;*/
+/*  font-size: 24px;*/
+/*  margin: 20px;*/
+/*  transition-duration: 0.4s;*/
+/*  border: 2px solid #00dcdf;*/
+/*}*/
+/*label:hover {*/
+/*  background-color: white;*/
+/*  color: #00dcdf;*/
+/*  border: 2px solid #00dcdf;*/
+/*}*/
