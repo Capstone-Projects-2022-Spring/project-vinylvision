@@ -17,11 +17,13 @@
     </div>
     <br><br>
     <div id="player">
+        
         <label for="artist" id="artist_text">Artist:</label>
         <input name="artist" id="artist" readonly style="width:400px"><br><br>
 
         <label for="album_name" data-uri="" data-url="">Album:</label>
         <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
+        <div id="imageDiv"></div><br>
         <input type="button" onclick="playAlbum()" value="Play Album" /><br><br>
 
         <label for="tracks">Tracks:</label>
@@ -66,7 +68,7 @@
 
         //check if there's a guess in the parameters and autofill in the fields
         var guess = getHashParams().guess
-        if (guess != "") {
+        if (guess != undefined) {
             document.getElementById('search_tags').value = guess
             searchAlbums(guess)
         }
@@ -88,8 +90,9 @@
                 success: function (response) {
                     //console.log(response.albums)
                     var album = response.albums.items[0]
-                    //console.log(album)
+                    console.log(album)
                     //console.log(album.name)
+                    document.getElementById("imageDiv").innerHTML = `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px'>`
 
                     //add album name
                     var albumNameDiv = document.getElementById("album_name")
