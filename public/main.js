@@ -16,7 +16,7 @@
 var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + window.apiKey;
 
 $(function () {
-    $('#fileform').on('submit', uploadFiles);
+  $('#fileform').on('submit', uploadFiles);
 });
 
 /**
@@ -24,21 +24,21 @@ $(function () {
  * Vision API.
  */
 function uploadFiles(event) {
-    event.preventDefault(); // Prevent the default form post
+  event.preventDefault(); // Prevent the default form post
 
-    // Grab the file and asynchronously convert to base64.
-    var file = $('#fileform [name=fileField]')[0].files[0];
-    var reader = new FileReader();
-    reader.onloadend = processFile;
-    reader.readAsDataURL(file);
+  // Grab the file and asynchronously convert to base64.
+  var file = $('#fileform [name=fileField]')[0].files[0];
+  var reader = new FileReader();
+  reader.onloadend = processFile;
+  reader.readAsDataURL(file);
 }
 
 /**
  * Event handler for a file's data url - extract the image data and pass it off.
  */
 function processFile(event) {
-    var content = event.target.result;
-    sendFileToCloudVision(content.replace('data:image/jpeg;base64,', ''));
+  var content = event.target.result;
+  sendFileToCloudVision(content.replace('data:image/jpeg;base64,', ''));
 }
 
 /**
@@ -46,47 +46,48 @@ function processFile(event) {
  * results.
  */
 function sendFileToCloudVision(content) {
-    var type = $('#fileform [name=type]').val();
+  var type = $('#fileform [name=type]').val();
 
-    // Strip out the file prefix when you convert to json.
-    var request = {
-        requests: [{
-            image: {
-                content: content
-            },
-            features: [{
-                type: type,
-                maxResults: 1
-            }]
-        }]
-    };
+  // Strip out the file prefix when you convert to json.
+  var request = {
+    requests: [{
+      image: {
+        content: content
+      },
+      features: [{
+        type: type,
+        maxResults: 1
+      }]
+    }]
+  };
 
+    //set spotify login div to null (to remove previous one)
     document.getElementById('login').innerHTML = null
-    $('#results').text('Loading...');
-    $.post({
-        url: CV_URL,
-        data: JSON.stringify(request),
-        contentType: 'application/json'
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        $('#results').text('ERRORS: ' + textStatus + ' ' + errorThrown);
-    }).done(displayJSON);
+  $('#results').text('Loading...');
+  $.post({
+    url: CV_URL,
+    data: JSON.stringify(request),
+    contentType: 'application/json'
+  }).fail(function (jqXHR, textStatus, errorThrown) {
+    $('#results').text('ERRORS: ' + textStatus + ' ' + errorThrown);
+  }).done(displayJSON);
 }
 
 /**
  * Displays the results.
  */
 function displayJSON(data) {
-    if (!data) {
-
-    }
+  if (!data) {
+    
+  }
     var label = data.responses[0].webDetection.bestGuessLabels[0].label
     var data2 = ('Your album cover is: \t' + label);
-    console.log(data2);
-    var contents = JSON.stringify(data, null, 5);
-    $('#results').text(data2);
-    var evt = new Event('results-displayed');
-    evt.results = contents;
-    document.dispatchEvent(evt);
+  console.log(data2);
+  var contents = JSON.stringify(data, null, 5);
+  $('#results').text(data2);
+  var evt = new Event('results-displayed');
+  evt.results = contents;
+  document.dispatchEvent(evt);
     //add spotify login div with the label from google vision as a parameter in url
     document.getElementById('login').innerHTML = `<a href='spotify/login#guess=${label}' type='button'>Search with Spotify</a>`
 }

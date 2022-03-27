@@ -1,4 +1,7 @@
 {
+  "name": "vinyl-vision-1",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
