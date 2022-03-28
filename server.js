@@ -3,11 +3,12 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-var serverPORT = 8888
-
-var projectUrl = 'http://localhost:8888';
-const spotify = require('./spotify.js');
 const fs = require('fs');
+
+require('dotenv').config(); //for loading from env file
+var serverPORT = process.env.PORT
+var projectUrl = process.env.PROJECT_URL;
+const spotify = require('./spotify.js');
 
 /**
  * Generates a random string containing numbers and letters
@@ -23,6 +24,8 @@ var generateRandomString = function (length) {
     }
     return text;
 };
+
+var guessVar = "";
 
 var stateKey = 'spotify_auth_state';
 
@@ -46,6 +49,19 @@ html = {
     }
 }
 
+function parseQueryString(query) {
+    var parsed = {};
+
+    query.replace(
+        new RegExp('([^?=&]+)(=([^&]*))?', 'g'),
+        function ($0, $1, $2, $3) {
+            parsed[decodeURIComponent($1)] = decodeURIComponent($3);
+        }
+    );
+
+    return parsed;
+}
+
 //spotify player homepage
 app.get('/spotify', function (req, res) {
     html.render('./public/spotify-player.html', res);
@@ -63,8 +79,23 @@ app.get('/spotify/login', function (req, res) {
         spotify.getAuthQueryString(state));
 });
 
+//send to spotify's site and check for has parameter in the format /spotify/login/:search?guess=someResponse
+app.get('/spotify/login/:search', function (req, res) {
+
+    guessVar = req.query.guess //store guess to send to redirect
+
+    var state = generateRandomString(16);
+    res.cookie(stateKey, state);
+
+    // your application requests authorization
+    res.redirect('https://accounts.spotify.com/authorize?' +
+        spotify.getAuthQueryString(state));
+});
+
 //send to spotify's site to authorize user with options to return to vinylvision site
 app.get('/spotify/logout', function (req, res) {
+    res.clearCookie('spotifyAccessToken');
+    res.clearCookie('spotifyRefreshToken');
     res.redirect('/');
 });
 
@@ -90,26 +121,14 @@ app.get('/spotify/callback', function (req, res) {
         request.post(authOptions, function (error, response, body) { //access token request
             if (!error && response.statusCode === 200) {
 
-                var access_token = body.access_token,
-                    refresh_token = body.refresh_token;
+                spotify.setCookies(res, body) //store cookies for access and refresh token
 
-                var options = {
-                    url: 'https://api.spotify.com/v1/me',
-                    headers: { 'Authorization': 'Bearer ' + access_token },
-                    json: true
-                };
-
-                // use the access token to access the Spotify Web API
-                request.get(options, function (error, response, body) {
-                    console.log(body);
-                });
-
-                // we can also pass the token to the browser to make requests from there
-                res.redirect(projectUrl + '/spotify/#' +
-                    querystring.stringify({
-                        access_token: access_token,
-                        refresh_token: refresh_token
-                    }));
+                if (guessVar != "") { //send guess to redirect
+                    res.redirect(projectUrl + '/spotify#guess=' + guessVar);
+                }else { //in case there's no guess
+                    res.redirect(projectUrl + '/spotify');
+                }
+                
             } else { //response failure
                 res.redirect('/#' +
                     querystring.stringify({

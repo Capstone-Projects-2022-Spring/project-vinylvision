@@ -1,10 +1,23 @@
 ﻿var querystring = require('querystring');
+require('dotenv').config(); //for loading from env file
 
-var client_id = 'd0525be4c5f740699430e39162f29ca4'; // Your client id
-var client_secret = '846a8c90ce324b1cae5596c150585d64'; // Your secret
-var redirect_uri = 'http://localhost:8888/spotify/callback'; // Your redirect uri
+var client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
+var client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
+var redirect_uri = process.env.PROJECT_URL + '/spotify/callback'; // Your redirect uri
 
 var scope = 'user-read-private user-read-email'; //permissions
+
+function setCookies(res, data) {
+    let spotifyAccessOptions = {
+        // Spotify sends token in seconds, express wants milliseconds
+        // remove 5 seconds to avoid race conditions.
+        maxAge: (data.expires_in - 5) * 1000
+    }
+    res.cookie('spotifyAccessToken', data.access_token, spotifyAccessOptions);
+    if (data.refresh_token) {
+        res.cookie('spotifyRefreshToken', data.refresh_token);
+    }
+}
 
 function getAuthOptions(code) { //access token authorization options
     return {
@@ -44,6 +57,7 @@ function getAuthQueryString(state) { //login & redirection options
 }
 
 module.exports = { //for external use of functions
+    setCookies: setCookies,
     getAuthOptions: getAuthOptions,
     getAuthOptionsRefresh: getAuthOptionsRefresh,
     getAuthQueryString: getAuthQueryString

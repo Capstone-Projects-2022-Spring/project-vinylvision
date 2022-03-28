@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+﻿// Copyright 2015, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License")
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,7 +23,7 @@ $(function () {
  * 'submit' event handler - reads the image bytes and sends it to the Cloud
  * Vision API.
  */
-function uploadFiles (event) {
+function uploadFiles(event) {
   event.preventDefault(); // Prevent the default form post
 
   // Grab the file and asynchronously convert to base64.
@@ -36,7 +36,7 @@ function uploadFiles (event) {
 /**
  * Event handler for a file's data url - extract the image data and pass it off.
  */
-function processFile (event) {
+function processFile(event) {
   var content = event.target.result;
   sendFileToCloudVision(content.replace('data:image/jpeg;base64,', ''));
 }
@@ -45,7 +45,7 @@ function processFile (event) {
  * Sends the given file contents to the Cloud Vision API and outputs the
  * results.
  */
-function sendFileToCloudVision (content) {
+function sendFileToCloudVision(content) {
   var type = $('#fileform [name=type]').val();
 
   // Strip out the file prefix when you convert to json.
@@ -61,6 +61,8 @@ function sendFileToCloudVision (content) {
     }]
   };
 
+    //set spotify login div to null (to remove previous one)
+    document.getElementById('login').innerHTML = null
   $('#results').text('Loading...');
   $.post({
     url: CV_URL,
@@ -74,15 +76,18 @@ function sendFileToCloudVision (content) {
 /**
  * Displays the results.
  */
-function displayJSON (data) {
+function displayJSON(data) {
   if (!data) {
     
   }
-  var data2 = ('Your album cover is: \t' + data.responses[0].webDetection.bestGuessLabels[0].label);
+    var label = data.responses[0].webDetection.bestGuessLabels[0].label
+    var data2 = ('Your album cover is: \t' + label);
   console.log(data2);
   var contents = JSON.stringify(data, null, 5);
   $('#results').text(data2);
   var evt = new Event('results-displayed');
   evt.results = contents;
   document.dispatchEvent(evt);
+    //add spotify login div with the label from google vision as a parameter in url
+    document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${label}' type='button'>Search with Spotify</a>`
 }
