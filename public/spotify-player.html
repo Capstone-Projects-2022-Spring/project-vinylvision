@@ -14,22 +14,27 @@
         <label for="search_tags">Search:</label>
         <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
         <input type="button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
+        <div id="search_error">
+            <br>
+        </div>
     </div>
-    <br><br>
-    <div id="player">
-        
-        <label for="artist" id="artist_text">Artist:</label>
-        <input name="artist" id="artist" readonly style="width:400px"><br><br>
+    <br>
+        <div id="player">
 
-        <label for="album_name" data-uri="" data-url="">Album:</label>
-        <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
-        <div id="imageDiv"></div><br>
-        <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
+            <label for="artist" id="artist_text">Artist:</label>
+            <input name="artist" id="artist" readonly style="width:400px"><br><br>
 
-        <label for="tracks">Tracks:</label>
-        <select name="tracks" id="tracks"></select><br><br>
-        <input type="button" onclick="playTrack()" value="Open Track" />
-    </div>
+            <label for="album_name" data-uri="" data-url="">Album:</label>
+            <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
+            <div id="imageDiv"></div><br>
+            <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
+
+            <label for="tracks">Tracks:</label>
+            <select name="tracks" id="tracks"></select><br><br>
+            <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
+            <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" /><br><br>
+            <input type="button" onclick="nextSearchResult(1)" value="Next Result" />
+        </div>
     <br>
     <div id="logout">
         <a href="/spotify/logout">Back to Home Page</a>
@@ -73,6 +78,23 @@
             searchAlbums(guess)
         }
 
+        var i = 0;
+
+        var albumSearches = null
+
+        //i is the current position in the albumSearches array
+        //j can increase or decrease this number
+        //this function will display albums in the player from the albumSearches array
+        function nextSearchResult(j) {
+            //albumSearches exists and bounds of i: 0-4
+            if (albumSearches && (0 <= (i+j) && (i+j) < 5)){
+                i += j
+                if (albumSearches[i]) { //if theres even enough search results (ive never caught this error)
+                    displayAlbum(albumSearches[i])
+                }
+            }
+        }
+
         //search for an album with the tags from query
         function searchAlbums(query) {
             if (query == "") return; //if empty, can require search tags, but dont need to
@@ -89,31 +111,60 @@
                 },
                 success: function (response) {
                     //console.log(response.albums)
-                    var album = response.albums.items[0]
-                    //console.log(album)
-                    //console.log(album.name)
-                    document.getElementById("imageDiv").innerHTML = `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px'>`
-
-                    //add album name
-                    var albumNameDiv = document.getElementById("album_name")
-                    albumNameDiv.value = album.name
-                    albumNameDiv.dataset.uri = album.uri
-                    albumNameDiv.dataset.url = album.external_urls.spotify
-
-                    //add artist names
-                    var artistDiv = document.getElementById("artist")
-                    artistDiv.value = album.artists[0].name
-                    document.getElementById("artist_text").innerHTML = "Artist:"
-                    for (let i = 1; i < album.artists.length; i++) {
-                        document.getElementById("artist_text").innerHTML = "Artists:"
-                        artistDiv.value += ", " + album.artists[i].name
+                    albumSearches = response.albums.items
+                    i = 0; //reset position in albumSearches array
+                    //display the top result
+                    if (albumSearches[0]) {
+                        document.getElementById("search_error").innerHTML = "<br>"
+                        displayAlbum(albumSearches[0])
                     }
-
-                    //then fetch the tracks
-                    fetchTracks(album.id)
+                    else {
+                        removeAlbum()
+                        document.getElementById("search_error").innerHTML = "<font color='red'>No search results found!</font>"
+                    }
                 }
             });
         };
+
+        function displayAlbum(album) {
+            //console.log(album)
+            //console.log(album.name)
+            document.getElementById("imageDiv").innerHTML = `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
+
+            //add album name
+            var albumNameDiv = document.getElementById("album_name")
+            albumNameDiv.value = album.name
+            albumNameDiv.dataset.uri = album.uri //add uri (), this is used for play() (unused)
+            albumNameDiv.dataset.url = album.external_urls.spotify //add url, this is opened when using "openTrack"
+
+            //add artist names
+            var artistDiv = document.getElementById("artist")
+            artistDiv.value = album.artists[0].name
+            document.getElementById("artist_text").innerHTML = "Artist:"
+            for (let i = 1; i < album.artists.length; i++) {
+                document.getElementById("artist_text").innerHTML = "Artists:"
+                artistDiv.value += ", " + album.artists[i].name
+            }
+
+            //then fetch the tracks
+            fetchTracks(album.id)
+        }
+
+        function removeAlbum() {
+            document.getElementById("imageDiv").innerHTML = null
+
+            var albumNameDiv = document.getElementById("album_name")
+            albumNameDiv.value = ""
+            albumNameDiv.dataset.uri = ""
+            albumNameDiv.dataset.url = ""
+
+            document.getElementById("artist").value = null
+            removeTracks()
+        }
+
+        function removeTracks() {
+            document.getElementById("tracks").innerHTML = null
+        }
 
         function fetchTracks(albumId) {
             $.ajax({
