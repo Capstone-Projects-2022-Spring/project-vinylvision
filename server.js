@@ -35,36 +35,9 @@ app.use(express.static(__dirname + '/public'))
     .use(cors())
     .use(cookieParser());
 
-html = {
-    render(path, response) {
-        fs.readFile(path, null, function (error, data) {
-            if (error) {
-                response.writeHead(404);
-                respone.write('file not found');
-            } else {
-                response.write(data);
-            }
-            response.end();
-        });
-    }
-}
-
-function parseQueryString(query) {
-    var parsed = {};
-
-    query.replace(
-        new RegExp('([^?=&]+)(=([^&]*))?', 'g'),
-        function ($0, $1, $2, $3) {
-            parsed[decodeURIComponent($1)] = decodeURIComponent($3);
-        }
-    );
-
-    return parsed;
-}
-
 //spotify player homepage
 app.get('/spotify', function (req, res) {
-    html.render('./public/spotify-player.html', res);
+    res.sendfile('./public/spotify-player.html');
 });
 
 //req: request, res: response
