@@ -154,6 +154,45 @@
             fetchTracks(album.id)
         }
 
+        function fetchTracks(albumId) {
+            $.ajax({
+                url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
+                data: {
+                    limit: 50
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + getToken()
+                },
+                success: function (response) {
+                    //console.log(response)
+                    //add tracks to dropdown
+                    var tracksDiv = document.getElementById("tracks")
+                    tracksDiv.innerHTML = null
+                    var tracks = response.items
+                    for (let i = 0; i < tracks.length; i++) {
+                        //console.log(response.items[i].name)
+                        //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
+                        tracksDiv.innerHTML += `<option value=${tracks[i].external_urls.spotify}>` + tracks[i].name + '</option>'
+                    }
+                    //play(accessToken)
+                }
+            });
+        };
+
+        function playAlbum() {
+            var dataUrl = document.getElementById("album_name").getAttribute("data-url")
+            if (dataUrl) {
+                window.open(dataUrl, "_blank")
+            }
+        }
+
+        function playTrack() {
+            var dataUrl = document.getElementById("tracks").value
+            if (dataUrl) {
+                window.open(dataUrl, "_blank")
+            }
+        }
+
         function removeAlbum() {
             document.getElementById("imageDiv").innerHTML = null
 
@@ -194,44 +233,7 @@
             })
         }
 
-        function fetchTracks(albumId) {
-            $.ajax({
-                url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
-                data: {
-                    limit: 50
-                },
-                headers: {
-                    'Authorization': 'Bearer ' + getToken()
-                },
-                success: function (response) {
-                    //console.log(response)
-                    //add tracks to dropdown
-                    var tracksDiv = document.getElementById("tracks")
-                    tracksDiv.innerHTML = null
-                    var tracks = response.items
-                    for (let i = 0; i < tracks.length; i++) {
-                        //console.log(response.items[i].name)
-                        //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
-                        tracksDiv.innerHTML += `<option value=${tracks[i].external_urls.spotify}>` + tracks[i].name + '</option>'
-                    }
-                    //play(accessToken)
-                }
-            });
-        };
-
-        function playAlbum() {
-            var dataUrl = document.getElementById("album_name").getAttribute("data-url")
-            if (dataUrl) {
-                window.open(dataUrl, "_blank")
-            }
-        }
-
-        function playTrack() {
-            var dataUrl = document.getElementById("tracks").value
-            if (dataUrl) {
-                window.open(dataUrl, "_blank")
-            }
-        }
+        
 
             //impossible to use without premium
         /*function play(accessToken) {

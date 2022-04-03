@@ -3,7 +3,7 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-const fs = require('fs');
+var path = require('path') //for sending files
 
 require('dotenv').config(); //for loading from env file
 var serverPORT = process.env.PORT
@@ -37,7 +37,7 @@ app.use(express.static(__dirname + '/public'))
 
 //spotify player homepage
 app.get('/spotify', function (req, res) {
-    res.sendfile('./public/spotify-player.html');
+    res.sendFile('spotify-player.html', { root: path.join(__dirname, '/public') });
 });
 
 //req: request, res: response
