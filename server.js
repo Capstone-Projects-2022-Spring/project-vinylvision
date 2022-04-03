@@ -144,14 +144,19 @@ app.get('/spotify/refresh_token', function (req, res) {
 
     // requesting access token from refresh token
     var refresh_token = req.query.refresh_token;
+    //console.log(refresh_token)
     var authOptionsRefresh = spotify.getAuthOptionsRefresh(refresh_token);
 
     request.post(authOptionsRefresh, function (error, response, body) {
         if (!error && response.statusCode === 200) { //response success
-            var access_token = body.access_token;
-            res.send({
+            //var access_token = body.access_token;
+            spotify.setCookies(res,body)
+            /*res.send({
                 'access_token': access_token
-            });
+            });*/
+            res.send({
+                'response': 'success'
+            })
         }
     });
 });

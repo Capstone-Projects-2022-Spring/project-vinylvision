@@ -87,10 +87,13 @@
         //this function will display albums in the player from the albumSearches array
         function nextSearchResult(j) {
             //albumSearches exists and bounds of i: 0-4
-            if (albumSearches && (0 <= (i + j) && (i + j) < 5)) {
+            if (albumSearches && (0 <= (i + j) && (i + j) < 10)) {
                 i += j
                 if (albumSearches[i]) { //if theres even enough search results (ive never caught this error)
                     displayAlbum(albumSearches[i])
+                }
+                else { //if there's not a result, revert the change
+                    i -= j
                 }
             }
         }
@@ -99,15 +102,16 @@
         function searchAlbums(query) {
             if (query == "") return; //if empty, can require search tags, but dont need to
             //console.log(getCookie('spotifyAccessToken'))
+            
             $.ajax({
                 url: 'https://api.spotify.com/v1/search',
                 data: {
                     q: query,
                     type: 'album',
-                    limit: 5
+                    limit: 10
                 },
                 headers: {
-                    'Authorization': 'Bearer ' + getCookie('spotifyAccessToken')
+                    'Authorization': 'Bearer ' + getToken()
                 },
                 success: function (response) {
                     //console.log(response.albums)
@@ -166,6 +170,30 @@
             document.getElementById("tracks").innerHTML = null
         }
 
+        function getToken() {
+            if (getCookie('spotifyAccessToken')){ //if token exists
+                return getCookie('spotifyAccessToken')
+            }
+            else {
+                //refresh the token
+                return refreshToken()
+            }
+        }
+
+        function refreshToken() {
+            //calls the node.js refresh token code that calls spotify's api
+            $.ajax({
+                type: 'GET',
+                url: '/spotify/refresh_token',
+                data: {
+                    refresh_token: getCookie('spotifyRefreshToken')
+                },
+                success: function (data) {
+                    return getCookie('spotifyAccessToken')
+                }
+            })
+        }
+
         function fetchTracks(albumId) {
             $.ajax({
                 url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
@@ -173,7 +201,7 @@
                     limit: 50
                 },
                 headers: {
-                    'Authorization': 'Bearer ' + getCookie('spotifyAccessToken')
+                    'Authorization': 'Bearer ' + getToken()
                 },
                 success: function (response) {
                     //console.log(response)
