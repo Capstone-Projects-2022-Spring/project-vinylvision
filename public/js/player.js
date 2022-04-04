@@ -31,10 +31,9 @@ function getCookie(cname) {
 var albumSearches = null
 
 //search for an album with the tags from query
-function searchAlbums(query) {
+async function searchAlbums(query) {
     if (query == "") return; //if empty, can require search tags, but dont need to
     //console.log(getCookie('spotifyAccessToken'))
-
     $.ajax({
         url: 'https://api.spotify.com/v1/search',
         data: {
@@ -43,7 +42,7 @@ function searchAlbums(query) {
             limit: 10
         },
         headers: {
-            'Authorization': 'Bearer ' + getToken()
+            'Authorization': 'Bearer ' + await getToken()
         },
         success: function (response) {
             //console.log(response.albums)
@@ -104,29 +103,29 @@ function displayAlbum(album) {
     fetchTracks(album.id)
 }
 
-function fetchTracks(albumId) {
+async function fetchTracks(albumId) {
     $.ajax({
-        url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
-        data: {
-            limit: 50
-        },
-        headers: {
-            'Authorization': 'Bearer ' + getToken()
-        },
-        success: function (response) {
-            //console.log(response)
-            //add tracks to dropdown
-            var tracksDiv = document.getElementById("tracks")
-            tracksDiv.innerHTML = null
-            var tracks = response.items
-            for (let i = 0; i < tracks.length; i++) {
-                //console.log(response.items[i].name)
-                //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
-                tracksDiv.innerHTML += `<option value=${tracks[i].external_urls.spotify}>` + tracks[i].name + '</option>'
+            url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
+            data: {
+                limit: 50
+            },
+            headers: {
+                'Authorization': 'Bearer ' + await getToken()
+            },
+            success: function (response) {
+                //console.log(response)
+                //add tracks to dropdown
+                var tracksDiv = document.getElementById("tracks")
+                tracksDiv.innerHTML = null
+                var tracks = response.items
+                for (let i = 0; i < tracks.length; i++) {
+                    //console.log(response.items[i].name)
+                    //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
+                    tracksDiv.innerHTML += `<option value=${tracks[i].external_urls.spotify}>` + tracks[i].name + '</option>'
+                }
+                //play(accessToken)
             }
-            //play(accessToken)
-        }
-    });
+        });
 };
 
 function playAlbum() {
@@ -159,26 +158,23 @@ function removeTracks() {
     document.getElementById("tracks").innerHTML = null
 }
 
-function getToken() {
-    if (getCookie('spotifyAccessToken')) { //if token exists
-        return getCookie('spotifyAccessToken')
-    }
-    else {
+async function getToken() {
+    var access = getCookie('spotifyAccessToken')
+    if (access == undefined || !access) { //if token doesnt exist
         //refresh the token
-        return refreshToken()
+        access = await refreshToken()
     }
+    return access
 }
 
-function refreshToken() {
+async function refreshToken() {
     //calls the node.js refresh token code that calls spotify's api
-    $.ajax({
+    var result = await $.ajax({
         type: 'GET',
         url: '/spotify/refresh_token',
         data: {
             refresh_token: getCookie('spotifyRefreshToken')
-        },
-        success: function (data) {
-            return getCookie('spotifyAccessToken')
         }
-    })
+    });
+    return result.access_token
 }

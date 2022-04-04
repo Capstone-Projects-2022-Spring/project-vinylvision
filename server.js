@@ -122,14 +122,11 @@ app.get('/spotify/refresh_token', function (req, res) {
 
     request.post(authOptionsRefresh, function (error, response, body) {
         if (!error && response.statusCode === 200) { //response success
-            //var access_token = body.access_token;
-            spotify.setCookies(res,body)
-            /*res.send({
-                'access_token': access_token
-            });*/
+            var access_token = body.access_token;
+            spotify.setCookies(res, body)
             res.send({
-                'response': 'success'
-            })
+                'access_token': access_token
+            });
         }
     });
 });
