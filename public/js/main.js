@@ -82,7 +82,7 @@ function displayJSON(data) {
   }
     var label = data.responses[0].webDetection.bestGuessLabels[0].label
     var data2 = ('Your album cover is: \t' + label);
-  console.log(data2);
+  //console.log(data2);
   var contents = JSON.stringify(data, null, 5);
   $('#results').text(data2);
   var evt = new Event('results-displayed');
