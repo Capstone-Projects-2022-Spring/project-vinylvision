@@ -6,32 +6,10 @@ var cookieParser = require('cookie-parser');
 var path = require('path') //for sending files
 
 require('dotenv').config(); //for loading from env file
-var serverPORT = process.env.PORT_NUM
 var projectUrl = process.env.PROJECT_URL;
 const spotify = require('./spotify.js');
 
-const functions = require('firebase-functions')
-
-//firebase
-//const firebase = require('firebase')
-//const admin = require('firebase-admin');
-//const serviceAccount = require("../serviceAccountKey.json");
-/*const firebaseConfig = {
-    apiKey: "AIzaSyDFevAaht4vZVZ7OKJ9lut6F8xxPBG5LJs",
-    authDomain: "tu-vinylvision.firebaseapp.com",
-    databaseURL: "https://tu-vinylvision-default-rtdb.firebaseio.com",
-    projectId: "tu-vinylvision",
-    storageBucket: "tu-vinylvision.appspot.com",
-    messagingSenderId: "13874989434",
-    appId: "1:13874989434:web:7de2a9ed0d216ca7896ec3",
-    measurementId: "G-SZEDZEHBLE"
-};*/
-//const db = firebase.initializeApp(firebaseConfig)
-/*admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});*/
-//module.exports = db;
-//let database = firebase.database()
+const functions = require('firebase-functions') //for firebase functions
 
 /**
  * Generates a random string containing numbers and letters
@@ -50,7 +28,7 @@ var generateRandomString = function (length) {
 
 var guessVar = "";
 
-var stateKey = 'spotify_auth_state';
+//var stateKey = 'spotify_auth_state';
 
 var app = express();
 
@@ -161,4 +139,5 @@ app.get('/spotify/refresh_token', function (req, res) {
 //app.createServer(router.handleRequest).listen(serverPORT);
 //app.listen(serverPORT);
 
+//export app for firebase to see and handles requests from url
 exports.app = functions.https.onRequest(app)

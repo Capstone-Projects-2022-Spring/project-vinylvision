@@ -14,10 +14,7 @@
     "firebase": "^9.6.10",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.20.0",
-    "request": "^2.88.2"
-  },
-  "scripts": {
-    "start": "node functions/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "request": "^2.88.2",
+    "serve-favicon": "^2.5.0"
   }
 }
