@@ -89,6 +89,10 @@ tr:nth-child(even) {
   position: absolute;
   z-index: -1;
 }
+#encodingTypeSelect{
+  opacity: 0;
+}
+
 label {
   cursor: pointer;
   background-color: #00dcdf;

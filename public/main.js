@@ -62,7 +62,7 @@ function sendFileToCloudVision(content) {
   };
 
     //set spotify login div to null (to remove previous one)
-    document.getElementById('login').innerHTML = null
+    // document.getElementById('login').innerHTML = null
   $('#results').text('Loading...');
   $.post({
     url: CV_URL,

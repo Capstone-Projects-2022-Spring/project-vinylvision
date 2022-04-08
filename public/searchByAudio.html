@@ -65,6 +65,11 @@
 
                         result.innerHTML =
                             `<table class="table" sty>
+				   	                <tr>
+					                     <td class="centerText">Song Title</td>
+					                    <td class="text-primary centerText">${response.result.title}</td>
+					                </tr>
+
                                     <tr>
                                         <td class="centerText">Album</td>
                                         <td class="text-primary centerText">${response.result.album}</td>
@@ -88,14 +93,14 @@
         }
     </script>
 
-    <div style="max-width: 28em;">
-
+    <div class="center" style="max-width: 28em;">
+        <p class="centerHeader">Record Audio</p>
         <select id="encodingTypeSelect">
             <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
         </select>
         <div id="controls">
-            <button id="recordButton">Record</button>
-            <button id="stopButton" disabled>Stop</button>
+            <button class="button" id="recordButton">Record</button>
+            <button class="button" id="stopButton" disabled>Stop</button>
         </div>
         <div id="formats"></div>
         <pre>Log</pre>
