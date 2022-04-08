@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "public": "public",
+    "site": "vinylvision",
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "app"
+      }
+    ],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs16"
+  }
+}

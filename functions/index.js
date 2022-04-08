@@ -6,9 +6,32 @@ var cookieParser = require('cookie-parser');
 var path = require('path') //for sending files
 
 require('dotenv').config(); //for loading from env file
-var serverPORT = process.env.PORT
+var serverPORT = process.env.PORT_NUM
 var projectUrl = process.env.PROJECT_URL;
 const spotify = require('./spotify.js');
+
+const functions = require('firebase-functions')
+
+//firebase
+//const firebase = require('firebase')
+//const admin = require('firebase-admin');
+//const serviceAccount = require("../serviceAccountKey.json");
+/*const firebaseConfig = {
+    apiKey: "AIzaSyDFevAaht4vZVZ7OKJ9lut6F8xxPBG5LJs",
+    authDomain: "tu-vinylvision.firebaseapp.com",
+    databaseURL: "https://tu-vinylvision-default-rtdb.firebaseio.com",
+    projectId: "tu-vinylvision",
+    storageBucket: "tu-vinylvision.appspot.com",
+    messagingSenderId: "13874989434",
+    appId: "1:13874989434:web:7de2a9ed0d216ca7896ec3",
+    measurementId: "G-SZEDZEHBLE"
+};*/
+//const db = firebase.initializeApp(firebaseConfig)
+/*admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});*/
+//module.exports = db;
+//let database = firebase.database()
 
 /**
  * Generates a random string containing numbers and letters
@@ -37,15 +60,17 @@ app.use(express.static(__dirname + '/public'))
 
 //spotify player homepage
 app.get('/spotify', function (req, res) {
-    res.sendFile('spotify-player.html', { root: path.join(__dirname, '/public') });
+    res.status(200).sendFile(path.join(__dirname, '/views/spotify-player.html'))
 });
+
+var state
 
 //req: request, res: response
 //send to spotify's site to authorize user with options to return to vinylvision site
 app.get('/spotify/login', function (req, res) {
 
-    var state = generateRandomString(16);
-    res.cookie(stateKey, state);
+    state = generateRandomString(16);
+    //res.cookie(stateKey, state);
 
     // your application requests authorization
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -57,8 +82,8 @@ app.get('/spotify/login/:search', function (req, res) {
 
     guessVar = req.query.guess //store guess to send to redirect
 
-    var state = generateRandomString(16);
-    res.cookie(stateKey, state);
+    state = generateRandomString(16);
+    //res.cookie(stateKey, state);
 
     // your application requests authorization
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -79,16 +104,17 @@ app.get('/spotify/callback', function (req, res) {
     // after checking the state parameter
 
     var code = req.query.code || null;
-    var state = req.query.state || null;
-    var storedState = req.cookies ? req.cookies[stateKey] : null;
+    //var state = req.query.state || null;
+    //var storedState = req.cookies ? req.cookies[stateKey] : null;
 
-    if (state === null || state !== storedState) { //state mismatch error
+    // || state !== storedState
+    if (state === null) { //state mismatch error
         res.redirect('/#' +
             querystring.stringify({
                 error: 'state_mismatch'
             })); //put in url state_mismatch
     } else {
-        res.clearCookie(stateKey);
+        //res.clearCookie(stateKey);
         var authOptions = spotify.getAuthOptions(code);
 
         request.post(authOptions, function (error, response, body) { //access token request
@@ -131,6 +157,8 @@ app.get('/spotify/refresh_token', function (req, res) {
     });
 });
 
-console.log('Listening on ' + serverPORT);
+//console.log('Listening on ' + serverPORT);
 //app.createServer(router.handleRequest).listen(serverPORT);
-app.listen(serverPORT);
+//app.listen(serverPORT);
+
+exports.app = functions.https.onRequest(app)
