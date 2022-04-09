@@ -29,6 +29,7 @@ function getCookie(cname) {
 }
 
 var albumSearches = null
+var i = 0;
 
 //search for an album with the tags from query
 async function searchAlbums(query) {
@@ -50,6 +51,7 @@ async function searchAlbums(query) {
             i = 0; //reset position in albumSearches array
             //display the top result
             if (albumSearches[0]) {
+                window.location.hash = "#guess=" + query
                 document.getElementById("search_error").innerHTML = "<br>"
                 displayAlbum(albumSearches[0])
             }
@@ -61,7 +63,16 @@ async function searchAlbums(query) {
     });
 };
 
-var i = 0;
+async function searchArtistAlbums() {
+    //console.log(albumSearches[i])
+    //var artist = albumSearches[i].artists[0].name
+    //var artist = document.getElementById("artist").value
+    var artist = document.getElementById("artist_select").value
+    if (artist != "") {
+        document.getElementById('search_tags').value = artist
+        searchAlbums(artist)
+    }
+}
 
 //i is the current position in the albumSearches array
 //j can increase or decrease this number
@@ -94,9 +105,13 @@ function displayAlbum(album) {
     var artistDiv = document.getElementById("artist")
     artistDiv.value = album.artists[0].name
     document.getElementById("artist_text").innerHTML = "Artist:"
-    for (let i = 1; i < album.artists.length; i++) {
+    var artistSelectDiv = document.getElementById("artist_select")
+    artistSelectDiv.innerHTML = null
+    artistSelectDiv.innerHTML = `<option>${album.artists[0].name}</option>`
+    for (let j = 1; j < album.artists.length; j++) {
         document.getElementById("artist_text").innerHTML = "Artists:"
-        artistDiv.value += ", " + album.artists[i].name
+        artistDiv.value += ", " + album.artists[j].name
+        artistSelectDiv.innerHTML += '<option>' + album.artists[j].name + '</option>'
     }
 
     //then fetch the tracks
@@ -118,10 +133,10 @@ async function fetchTracks(albumId) {
                 var tracksDiv = document.getElementById("tracks")
                 tracksDiv.innerHTML = null
                 var tracks = response.items
-                for (let i = 0; i < tracks.length; i++) {
+                for (let j = 0; j < tracks.length; j++) {
                     //console.log(response.items[i].name)
                     //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
-                    tracksDiv.innerHTML += `<option value=${tracks[i].external_urls.spotify}>` + tracks[i].name + '</option>'
+                    tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
                 }
                 //play(accessToken)
             }

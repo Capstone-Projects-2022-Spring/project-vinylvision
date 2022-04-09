@@ -34,7 +34,10 @@
         <select name="tracks" id="tracks"></select><br><br>
         <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
         <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
-        <input type="button" onclick="nextSearchResult(1)" value="Next Result" />
+        <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
+        <label for="tracks">Artists:</label>
+        <select name="artist_select" id="artist_select"></select><br><br>
+        <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
     </div>
     <br>
     <div id="logout">
@@ -48,6 +51,14 @@
             document.getElementById('search_tags').value = guess
             searchAlbums(guess)
         }
+        window.addEventListener('hashchange', function () {
+            //window.history.pushState({}, null, myOldUrl);
+            var guess = getHashParams().guess
+            if (guess != undefined) {
+                document.getElementById('search_tags').value = guess
+                searchAlbums(guess)
+            }
+        });
 
         //add event listener to search bar so that pressing enter searches it
         // Get the input field
