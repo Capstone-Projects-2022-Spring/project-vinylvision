@@ -61,7 +61,7 @@
         function submit() {
             if (file) {
                 var postData = new FormData();
-                postData.append('api_token', 'c9406b4f36456e3730cf2cf10c7d5348');
+                postData.append('api_token', 'f515f56c29f1626c4238ac352fa98b18');
                 postData.append('file', file);
                 postData.append('return', 'spotify');
 
@@ -77,12 +77,18 @@
                     success: function (response) {
                         console.log(response);
 
-                        result.innerHTML =
-                            `<table class="table">
-				   	<tr>
-					    <td>Song Title</td>
-					    <td class="text-primary">${response.result.title}</td>
-					</tr>
+                        if (response == null) {
+                            console.alert("audio file upload failed");
+                        }
+
+                        else {
+
+                            result.innerHTML =
+                                `<table class="table">
+				   	    <tr>
+					        <td>Song Title</td>
+					        <td class="text-primary">${response.result.title}</td>
+					    </tr>
                                         <tr>
                                             <td>Album</td>
                                             <td class="text-primary">${response.result.album}</td>
@@ -100,6 +106,7 @@
                                             <td class="text-primary">${response.result.release_date}</td>
                                         </tr>
                                     </table>`;
+                        }
                     }
                 });
             }
@@ -129,52 +136,41 @@
     <script>
         URL = window.URL || window.webkitURL;
 
-        var gumStream; 						//stream from getUserMedia()
-        var recorder; 						//WebAudioRecorder object
-        var inputMic; 							//MediaStreamAudioSourceNode  we'll be recording
-        var encodingType; 					//holds selected encoding for resulting audio (file)
-        var encodeAfterRecord = true;       // when to encode
+        var gumStream; 						
+        var recorder; 						
+        var inputMic; 							
+        var encodingType; 					
+        var encodeAfterRecord = true;  
 
-        // shim for AudioContext when it's not avb. 
+
         var AudioContext = window.AudioContext || window.webkitAudioContext;
-        var audioContext; //new audio context to help us record
+        var audioContext;
 
         var encodingTypeSelect = document.getElementById("encodingTypeSelect");
         var recordButton = document.getElementById("recordButton");
         var stopButton = document.getElementById("stopButton");
 
-        //add events to those 2 buttons
+        //add events to buttons
         recordButton.addEventListener("click", startRecording);
         stopButton.addEventListener("click", stopRecording);
 
         function startRecording() {
-	        console.log("startRecording() called");
-
-
             var constraints = { audio: true, video:false }
-
-            /*
-    	        We're using the standard promise based getUserMedia() 
-    	        https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-	        */
 
 	        navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
 		        __log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
 
-
-		        audioContext = new AudioContext();
+                audioContext = new AudioContext();
 
 		        //update the format 
 		        document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ "+audioContext.sampleRate/1000+"kHz"
 
 		        //assign to gumStream for later use
 		        gumStream = stream;
-		
-		        /* use the stream */
+
 		        inputMic = audioContext.createMediaStreamSource(stream);
 		
-
-		        //get the encoding 
+		        //get the encoding - for future, add wav or other types
 		        encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
 		
 		        //disable the encoding selector
@@ -183,13 +179,11 @@
 		        recorder = new WebAudioRecorder(inputMic, {
 		          workerDir: "js/", // must end with slash
 		          encoding: encodingType,
-		          numChannels:2, //2 is the default, mp3 encoding supports only 2
+		          numChannels:2,
 		          onEncoderLoading: function(recorder, encoding) {
-		            // show "loading encoder..." display
 		            __log("Loading "+encoding+" encoder...");
 		          },
 		          onEncoderLoaded: function(recorder, encoding) {
-		            // hide "loading encoder..." display
 		            __log(encoding+" encoder loaded");
 		          }
 		        });
