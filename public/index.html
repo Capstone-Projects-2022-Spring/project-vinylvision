@@ -75,9 +75,9 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        console.log(response);
+                        //console.log(response);
 
-                        if (response == null) {
+                        if ((response == null) || (response.result.title)) {
                             console.alert("audio file upload failed");
                         }
 
@@ -85,10 +85,10 @@
 
                             result.innerHTML =
                                 `<table class="table">
-				   	    <tr>
-					        <td>Song Title</td>
-					        <td class="text-primary">${response.result.title}</td>
-					    </tr>
+				   	                    <tr>
+					                        <td>Song Title</td>
+					                        <td class="text-primary">${response.result.title}</td>
+					                    </tr>
                                         <tr>
                                             <td>Album</td>
                                             <td class="text-primary">${response.result.album}</td>
@@ -247,8 +247,8 @@
 
 	        //link the a element to the blob
 	        link.href = url;
-	        link.download = new Date().toISOString() + '.'+encoding;
-	        link.innerHTML = link.download;
+	        link.download = new Date().toISOString() + '.'+ encoding;
+            link.innerHTML = link.download;
 
 	        //add the new audio and a elements to the li element
 	        li.appendChild(au);
