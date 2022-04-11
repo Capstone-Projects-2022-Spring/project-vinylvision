@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "tu-vinylvision",
+  "private_key_id": "f3e986ab013648b1f52a40824cadabafd131e003",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC8rusK/G6pHpfK\niltmT0bCxU6V6FKs7rr/yLvNXUpbjeyuXwPFPwfRZfaiMFi777UeZtVf8zGZvL9w\nfrXpch9YsvEy3vaiV2EXerAdvTnw94qSc3saxvYmkK9JPMk8tGG23JZJbs84khl/\ndL0RSS3xUnJIzu2etguK2V8eDFpmvf8kybhkEGeN8YlxmBhbR9Kk6Ve7PpXM+PpK\n9jCjCEy0jTXA+YzC1dJkBZmepZ1iJWdBvcHrliAE6Mc4rmWwWYoZY01NWXf71aTJ\n+djm4iY42yeC75Pgr/J3vK0/CEPKYpEEp7/47566m0tecifHVd3ivJauHOmyiU7T\nJPnhNH/dAgMBAAECggEADLTFee/rOShTldLLZOW3INajUXpbrERHWNeZDgis6+LF\ngC3rKxVGNCu8TXUZWflCe9Gg/N0mXJwBUv9gG2BmtqprjmlwDRlP8yzSlK4cK3Cq\nvEIFQEBgbdMV0Btv0c6z5dnk+lJOp23vRE4FjWxy05V3F2rCmwrXVs+x6sFvimDo\nxhwa7JwBhT9JfgiX6fIlstPXkEHA+TtQWoygLQZbCYgxElqC9XhTBBx9Wf0gsSVT\nfQvRkFEb/+gBN/ZnedZPoqMZpb2lQAMSknc/8R8sQX9iIA9ukAmRl/7VFgicW+31\n1lPU5wmbb1ERza+HyYrK2IC5XAk3kFFQNiYb/EnlAQKBgQDn/XCBUBax/9eCcs/l\nV/FI0J1f9IGKIx3dFcC43YlCI9w5WcuS4mv2BASNXgeGnhjzJkDq+qIHM7qw2X8/\nQo/A+2NiLrY4kaRoNaGewDBlXSX3oWNAkICmD1DzYYTIoiwC/l3MIOdPWKUripwR\nHY3YOWDbc8Nr0m/hM1KTj9unFQKBgQDQNhHYrhn937oydjsXy9eQgF6LuYOWPaN9\nsvyKjAoY9QxAoAy4cmX3L+0p4pTOoQz1SNmTQniQe5AXTUNKnFJI/B7C2nauJhz6\nXQRnc59/iw/Gkwidl3xj+88MB2lbB3DEiJbzrW0srh0KFuQoFIR7B4H8EsGKAZ1X\niS5P54MnqQKBgG3CdBtKaCJ5WF5oscHhlNANm5fNmAhiSvvSEeelMQ6w5r3fpThu\nlgPErN6xsT/YxxcrbyV9xXFA4UBQ9ypX9Kmqhr/qN96V0cJYNYplhcA/jPoXSl0+\nwQ9QSc2MwwUl7UrRTFGK88WPvD3Yi7RxVi4KH7BUmg4Gd1aGMLiOJK9tAoGAM/AI\n66AiY63XaJcNjpYOo8Eh1IDmTif6DHUFghoEus0FzWkfQzNmNA8EfhpDPHf4H4eY\nnp9KK+BmxSlEy+vKquIZWkncqPxg5iMl4hh5hPtPaB1tXMJZCSfbMgj3QvnMK3pX\nDVoJjcew/r9PEqBrm7T3u8WB+ccFVLynjM8XbGECgYA5tG5P2nlRJdaVgjI5B6c5\nDxQUl1l1pEy2+8t5ZPExY9LmsHa7vFLWKj8UevbFjMGkXWFoYmC+LEi6JeQ9fUoW\nNkHd6cUS4V66ACLRTCUjaLLVIAGb1BHSTY3/5PGp2IBu+p1BS8cR4wdEqecraTD/\nqD0ZUyefpAbiLxFJKeTBjA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "machine-learning-in-web-app@tu-vinylvision.iam.gserviceaccount.com",
+  "client_id": "118144156084817814869",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/machine-learning-in-web-app%40tu-vinylvision.iam.gserviceaccount.com"
+}

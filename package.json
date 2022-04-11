@@ -17,6 +17,7 @@
     "react-scripts": "5.0.0",
     "request": "^2.88.2",
     "require": "^2.4.20",
+    "requirejs": "^2.3.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

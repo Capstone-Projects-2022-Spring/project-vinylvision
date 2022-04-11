@@ -8,7 +8,7 @@ function main() {
    * (Not necessary if passing values as arguments)
    */
 
-  const filename = "/Users/john/Downloads/ram.jpeg";
+  const filename = "/Users/aguerrelli/Desktop/StoneyCover.jpeg";
   const endpointId = "6781198381889880064";
   const project = 'tu-vinylvision';
   const location = 'us-central1';

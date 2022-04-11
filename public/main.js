@@ -17,7 +17,7 @@ require('dotenv').config();
 //const filename = "/Users/john/Downloads/ram.jpeg";
 const endpointId = "6781198381889880064";
 const project = 'tu-vinylvision';
-const location = 'us-central1';
+const location1 = 'us-central1';
 const aiplatform = require('@google-cloud/aiplatform');
 const {instance, params, prediction} = aiplatform.protos.google.cloud.aiplatform.v1.schema.predict;
 
@@ -36,7 +36,7 @@ const predictionServiceClient = new PredictionServiceClient(clientOptions);
 
 async function predictImageClassification(image) {
   // Configure the endpoint resource
-  const endpoint = `projects/${project}/locations/${location}/endpoints/${endpointId}`;
+  const endpoint = `projects/${project}/locations/${location1}/endpoints/${endpointId}`;
 
   const parametersObj = new params.ImageClassificationPredictionParams({
     confidenceThreshold: 0.0001,
