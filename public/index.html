@@ -77,18 +77,18 @@
                     success: function (response) {
                         //console.log(response);
 
-                        if ((response == null) || (response.result.title = 'error')) {
-                           result.innerHTML = `<table class="table">  <tr> ("audio file upload failed")  </tr> </table>`;
+                        if ((response.result == null) || (response.result.title = 'error')) {
+                           result.innerHTML = `<table class="table">  <tr> <td> audio file upload failed </td> </tr> </table>`;
                         }
 
                         else {
 
                             result.innerHTML =
                                 `<table class="table">
-				   	                    <tr>
-					                        <td>Song Title</td>
-					                        <td class="text-primary">${response.result.title}</td>
-					                    </tr>
+				       <tr>
+					    <td>Song Title</td>
+				   	    <td class="text-primary">${response.result.title}</td>
+				       </tr>
                                         <tr>
                                             <td>Album</td>
                                             <td class="text-primary">${response.result.album}</td>
