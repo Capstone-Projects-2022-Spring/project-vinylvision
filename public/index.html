@@ -31,7 +31,7 @@
     </div><br />
 
     <div id="login">
-        
+
     </div>
 
     <div>
@@ -47,7 +47,11 @@
 
 
         <h5 class="mt-3">Result</h5>
-        <div id="result"></div>
+        <div id="result"></div><br />
+
+        <div id="login2">
+
+        </div><br />
     </div>
 
     <script>
@@ -60,6 +64,7 @@
 
         function submit() {
             if (file) {
+                document.getElementById('login2').innerHTML = null
                 var postData = new FormData();
                 postData.append('api_token', 'f515f56c29f1626c4238ac352fa98b18');
                 postData.append('file', file);
@@ -78,34 +83,35 @@
                         //console.log(response);
 
                         if ((response.result == null) || (response.result.title == 'error')) {
-                           result.innerHTML = `<table class="table">  <tr> <td> audio file upload failed </td> </tr> </table>`;
+                            result.innerHTML = `<table class="table">  <tr> <td> audio file upload failed </td> </tr> </table>`;
                         }
 
                         else {
-
                             result.innerHTML =
                                 `<table class="table">
-				                        <tr>
-					                        <td>Song Title</td>
-				   	                        <td class="text-primary">${response.result.title}</td>
-				                        </tr>
-                                        <tr>
-                                            <td>Album</td>
-                                            <td class="text-primary">${response.result.album}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Artist</td>
-                                            <td class="text-primary">${response.result.artist}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Label</td>
-                                            <td class="text-primary">${response.result.label}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Release Date</td>
-                                            <td class="text-primary">${response.result.release_date}</td>
-                                        </tr>
-                                    </table>`;
+                                            <tr>
+                                                <td>Song Title</td>
+                                                <td class="text-primary">${response.result.title}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Album</td>
+                                                <td class="text-primary">${response.result.album}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Artist</td>
+                                                <td class="text-primary">${response.result.artist}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Label</td>
+                                                <td class="text-primary">${response.result.label}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Release Date</td>
+                                                <td class="text-primary">${response.result.release_date}</td>
+                                            </tr>
+                                        </table>`;
+                            var search = response.result.title + " " + response.result.artist
+                            document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${search}' type='button'>Search with Spotify</a>`
                         }
                     }
                 });
@@ -136,11 +142,11 @@
     <script>
         URL = window.URL || window.webkitURL;
 
-        var gumStream; 						
-        var recorder; 						
-        var inputMic; 							
-        var encodingType; 					
-        var encodeAfterRecord = true;  
+        var gumStream;
+        var recorder;
+        var inputMic;
+        var encodingType;
+        var encodeAfterRecord = true;
 
 
         var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -155,112 +161,112 @@
         stopButton.addEventListener("click", stopRecording);
 
         function startRecording() {
-            var constraints = { audio: true, video:false }
+            var constraints = { audio: true, video: false }
 
-	        navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-		        __log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
+            navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+                __log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
 
                 audioContext = new AudioContext();
 
-		        //update the format 
-		        document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ "+audioContext.sampleRate/1000+"kHz"
+                //update the format
+                document.getElementById("formats").innerHTML = "Format: 2 channel " + encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value + " @ " + audioContext.sampleRate / 1000 + "kHz"
 
-		        //assign to gumStream for later use
-		        gumStream = stream;
+                //assign to gumStream for later use
+                gumStream = stream;
 
-		        inputMic = audioContext.createMediaStreamSource(stream);
-		
-		        //get the encoding - for future, add wav or other types
-		        encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
-		
-		        //disable the encoding selector
-		        encodingTypeSelect.disabled = true;
+                inputMic = audioContext.createMediaStreamSource(stream);
 
-		        recorder = new WebAudioRecorder(inputMic, {
-		          workerDir: "js/", // must end with slash
-		          encoding: encodingType,
-		          numChannels:2,
-		          onEncoderLoading: function(recorder, encoding) {
-		            __log("Loading "+encoding+" encoder...");
-		          },
-		          onEncoderLoaded: function(recorder, encoding) {
-		            __log(encoding+" encoder loaded");
-		          }
-		        });
+                //get the encoding - for future, add wav or other types
+                encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
 
-		        recorder.onComplete = function(recorder, blob) { 
-			        __log("Encoding complete");
-			        createDownloadLink(blob,recorder.encoding);
-			        encodingTypeSelect.disabled = false;
-		        }
+                //disable the encoding selector
+                encodingTypeSelect.disabled = true;
 
-		        recorder.setOptions({
-		          timeLimit:120,
-		          encodeAfterRecord:encodeAfterRecord,
-	              ogg: {quality: 0.5},
-	              mp3: {bitRate: 160}
-	            });
+                recorder = new WebAudioRecorder(inputMic, {
+                    workerDir: "js/", // must end with slash
+                    encoding: encodingType,
+                    numChannels: 2,
+                    onEncoderLoading: function (recorder, encoding) {
+                        __log("Loading " + encoding + " encoder...");
+                    },
+                    onEncoderLoaded: function (recorder, encoding) {
+                        __log(encoding + " encoder loaded");
+                    }
+                });
 
-		        //start the recording process
-		        recorder.startRecording();
+                recorder.onComplete = function (recorder, blob) {
+                    __log("Encoding complete");
+                    createDownloadLink(blob, recorder.encoding);
+                    encodingTypeSelect.disabled = false;
+                }
 
-		         __log("Recording started");
+                recorder.setOptions({
+                    timeLimit: 120,
+                    encodeAfterRecord: encodeAfterRecord,
+                    ogg: { quality: 0.5 },
+                    mp3: { bitRate: 160 }
+                });
 
-	        }).catch(function(err) {
-	  	        //enable the record button if getUSerMedia() fails
-    	        recordButton.disabled = false;
-    	        stopButton.disabled = true;
+                //start the recording process
+                recorder.startRecording();
 
-	        });
+                __log("Recording started");
 
-	        //disable the record button
+            }).catch(function (err) {
+                //enable the record button if getUSerMedia() fails
+                recordButton.disabled = false;
+                stopButton.disabled = true;
+
+            });
+
+            //disable the record button
             recordButton.disabled = true;
             stopButton.disabled = false;
         }
 
         function stopRecording() {
-	        console.log("stopRecording() called");
-	
-	        //stop microphone access
-	        gumStream.getAudioTracks()[0].stop();
+            console.log("stopRecording() called");
 
-	        //disable the stop button
-	        stopButton.disabled = true;
-	        recordButton.disabled = false;
-	
-	        //tell the recorder to finish the recording (stop recording + encode the recorded audio)
-	        recorder.finishRecording();
+            //stop microphone access
+            gumStream.getAudioTracks()[0].stop();
 
-	        __log('Recording stopped');
+            //disable the stop button
+            stopButton.disabled = true;
+            recordButton.disabled = false;
+
+            //tell the recorder to finish the recording (stop recording + encode the recorded audio)
+            recorder.finishRecording();
+
+            __log('Recording stopped');
         }
 
-        function createDownloadLink(blob,encoding) {
-	
-	        var url = URL.createObjectURL(blob);
-	        var au = document.createElement('audio');
-	        var li = document.createElement('li');
-	        var link = document.createElement('a');
+        function createDownloadLink(blob, encoding) {
 
-	        //add controls to the <audio> element
-	        au.controls = true;
-	        au.src = url;
+            var url = URL.createObjectURL(blob);
+            var au = document.createElement('audio');
+            var li = document.createElement('li');
+            var link = document.createElement('a');
 
-	        //link the a element to the blob
-	        link.href = url;
-	        link.download = new Date().toISOString() + '.'+ encoding;
+            //add controls to the <audio> element
+            au.controls = true;
+            au.src = url;
+
+            //link the a element to the blob
+            link.href = url;
+            link.download = new Date().toISOString() + '.' + encoding;
             link.innerHTML = link.download;
 
-	        //add the new audio and a elements to the li element
-	        li.appendChild(au);
-	        li.appendChild(link);
+            //add the new audio and a elements to the li element
+            li.appendChild(au);
+            li.appendChild(link);
 
-	        //add the li element to the ordered list
-	        recordingsList.appendChild(li);
+            //add the li element to the ordered list
+            recordingsList.appendChild(li);
         }
 
         //helper function
         function __log(e, data) {
-	        log.innerHTML += "\n" + e + " " + (data || '');
+            log.innerHTML += "\n" + e + " " + (data || '');
         }
     </script>
 
