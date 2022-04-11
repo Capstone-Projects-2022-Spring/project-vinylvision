@@ -1,13 +1,14 @@
 'use strict';
+require('dotenv').config();
 
-function main(filename, endpointId, project, location = 'us-central1') {
+function main() {
   // [START aiplatform_predict_image_classification_sample]
   /**
    * TODO(developer): Uncomment these variables before running the sample.\
    * (Not necessary if passing values as arguments)
    */
 
-  const filename = "YOUR_PREDICTION_FILE_NAME";
+  const filename = "/Users/john/Downloads/ram.jpeg";
   const endpointId = "6781198381889880064";
   const project = 'tu-vinylvision';
   const location = 'us-central1';
@@ -76,4 +77,4 @@ process.on('unhandledRejection', err => {
   process.exitCode = 1;
 });
 
-main(...process.argv.slice(2));
+main();

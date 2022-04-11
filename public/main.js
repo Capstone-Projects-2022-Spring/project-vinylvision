@@ -1,4 +1,4 @@
-// Copyright 2015, Google, Inc.
+﻿// Copyright 2015, Google, Inc.
 // Licensed under the Apache License, Version 2.0 (the "License")
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -74,14 +74,9 @@ function sendFileToCloudVision (content) {
 /**
  * Displays the results.
  */
-function displayJSON (data) {
-  if (!data) {
-    
-  }
-  var data2 = ('Your album cover is: \t' + data.responses[0].webDetection.bestGuessLabels[0].label);
-  console.log(data2);
-  var contents = JSON.stringify(data, null, 5);
-  $('#results').text(data2);
+ function displayJSON (data) {
+  var contents = JSON.stringify(data, null, 4);
+  $('#results').text(contents);
   var evt = new Event('results-displayed');
   evt.results = contents;
   document.dispatchEvent(evt);
