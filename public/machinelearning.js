@@ -32,7 +32,7 @@ function main() {
     const endpoint = `projects/${project}/locations/${location}/endpoints/${endpointId}`;
 
     const parametersObj = new params.ImageClassificationPredictionParams({
-      confidenceThreshold: 0.5,
+      confidenceThreshold: 0.0001,
       maxPredictions: 5,
     });
     const parameters = parametersObj.toValue();
