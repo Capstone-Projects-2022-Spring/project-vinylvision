@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body style = background-color:#FFFFFF>
-<a href="../public/homePage.html">
+<a href="../public/index.html">
     <img src="../public/logo.jpg" alt="logo" class="center"/>
 </a>
 <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -34,7 +34,8 @@
 
 
         <p class="centerHeader">Results:</p>
-        <div id="result"></div>
+        <div id="result"></div><br />
+        <div id="login2"></div><br />
     </div>
 
     <script>
@@ -47,8 +48,9 @@
 
         function submit() {
             if (file) {
+                document.getElementById('login2').innerHTML = null
                 var postData = new FormData();
-                postData.append('api_token', 'c9406b4f36456e3730cf2cf10c7d5348');
+                postData.append('api_token', 'f515f56c29f1626c4238ac352fa98b18');
                 postData.append('file', file);
                 postData.append('return', 'spotify');
 
