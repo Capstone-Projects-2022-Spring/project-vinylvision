@@ -77,7 +77,7 @@
                     success: function (response) {
                         //console.log(response);
 
-                        if ((response == null) || (response.result.title)) {
+                        if ((response == null) || (response.result.title = 'error')) {
                            result.innerHTML = `<table class="table">  <tr> ("audio file upload failed")  </tr> </table>`;
                         }
 
