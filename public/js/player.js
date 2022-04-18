@@ -51,7 +51,7 @@ async function searchAlbums(query) {
             i = 0; //reset position in albumSearches array
             //display the top result
             if (albumSearches[0]) {
-                window.location.hash = "#guess=" + query
+                window.location.hash = "#guess=" + encodeURIComponent(query)
                 document.getElementById("search_error").innerHTML = "<br>"
                 displayAlbum(albumSearches[0])
             }

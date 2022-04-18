@@ -101,7 +101,7 @@ app.get('/spotify/callback', function (req, res) {
                 spotify.setCookies(res, body) //store cookies for access and refresh token
 
                 if (guessVar != "") { //send guess to redirect
-                    res.redirect(projectUrl + '/spotify#guess=' + guessVar);
+                    res.redirect(projectUrl + '/spotify#guess=' + encodeURIComponent(guessVar));
                 }else { //in case there's no guess
                     res.redirect(projectUrl + '/spotify');
                 }
