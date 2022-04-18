@@ -8,6 +8,7 @@ function main() {
    * (Not necessary if passing values as arguments)
    */
 
+  //const filename = "/Users/aguerrelli/Desktop/BeatlesAbbey_Road.jpg";
   const filename = "/Users/aguerrelli/Desktop/StoneyCover.jpeg";
   const endpointId = "6781198381889880064";
   const project = 'tu-vinylvision';
@@ -32,7 +33,7 @@ function main() {
     const endpoint = `projects/${project}/locations/${location}/endpoints/${endpointId}`;
 
     const parametersObj = new params.ImageClassificationPredictionParams({
-      confidenceThreshold: 0.0001,
+      confidenceThreshold: 0.5,
       maxPredictions: 5,
     });
     const parameters = parametersObj.toValue();
@@ -55,16 +56,20 @@ function main() {
     const [response] = await predictionServiceClient.predict(request);
 
     console.log('Predict image classification response');
-    console.log(`\tDeployed model id : ${response.deployedModelId}`);
+    //console.log(`\tDeployed model id : ${response.deployedModelId}`);
     const predictions = response.predictions;
-    console.log('\tPredictions :');
+    //console.log('\tPredictions :');
     for (const predictionValue of predictions) {
       const predictionResultObj =
         prediction.ClassificationPredictionResult.fromValue(predictionValue);
       for (const [i, label] of predictionResultObj.displayNames.entries()) {
-        console.log(`\tDisplay name: ${label}`);
-        console.log(`\tConfidences: ${predictionResultObj.confidences[i]}`);
-        console.log(`\tIDs: ${predictionResultObj.ids[i]}\n\n`);
+        if(predictionResultObj.confidences[i] > parametersObj.confidenceThreshold) {
+          console.log(`\tYour album cover is:\t ${label}`);
+          console.log(`\tConfidence:\t ${predictionResultObj.confidences[i]}\n`);
+        } else {
+          console.log("Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results.");
+        }
+        //console.log(`\tIDs: ${predictionResultObj.ids[i]}\n\n`);
       }
     }
   }
