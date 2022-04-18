@@ -39,7 +39,7 @@ async function searchAlbums(query) {
         url: 'https://api.spotify.com/v1/search',
         data: {
             q: query,
-            type: 'album',
+            type: 'album,track,artist',
             limit: 10
         },
         headers: {
