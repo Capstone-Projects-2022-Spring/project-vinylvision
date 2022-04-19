@@ -36,7 +36,7 @@ async function searchAlbums(query) {
     document.getElementById("search_error").innerHTML = "<br>"
     if (query == "") { //if empty, can require search tags, but dont need to
         if (document.getElementById('search_tags2').value != "") {
-            document.getElementById("search_error").innerHTML = `<font color='red'>Album Guess required! Try placing the "Song" there.</font>`
+            document.getElementById("search_error").innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
         } else {
             document.getElementById("search_error").innerHTML = `<font color='red'>Album Guess required!</font>`
         }
