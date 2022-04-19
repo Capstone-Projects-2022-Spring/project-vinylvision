@@ -39,7 +39,7 @@ async function searchAlbums(query) {
         url: 'https://api.spotify.com/v1/search',
         data: {
             q: query,
-            type: 'album,track,artist',
+            type: 'album',
             limit: 10
         },
         headers: {
@@ -51,7 +51,9 @@ async function searchAlbums(query) {
             i = 0; //reset position in albumSearches array
             //display the top result
             if (albumSearches[0]) {
-                window.location.hash = "#guess=" + encodeURIComponent(query)
+                if (getHashParams().guess != query) {
+                    window.location.hash = "#guess=" + encodeURIComponent(query)
+                }
                 document.getElementById("search_error").innerHTML = "<br>"
                 displayAlbum(albumSearches[0])
             }
@@ -133,12 +135,25 @@ async function fetchTracks(albumId) {
                 var tracksDiv = document.getElementById("tracks")
                 tracksDiv.innerHTML = null
                 var tracks = response.items
+                var song = getHashParams().song
                 for (let j = 0; j < tracks.length; j++) {
                     //console.log(response.items[i].name)
                     //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
                     tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
                 }
-                //play(accessToken)
+                console.log(song)
+                if (song != undefined) {
+                    console.log(tracks)
+                    var index = tracks.findIndex(function (track) {
+                        return track.name == song
+                    })
+                    console.log(index)
+                    if (index < 1) {
+                        tracksDiv.selectedIndex = index
+                    } else {
+                        document.getElementById("search_error").innerHTML = `<font color='red'>${song} not found in album!</font>`
+                    }
+                }
             }
         });
 };
