@@ -33,8 +33,15 @@ var i = 0;
 
 //search for an album with the tags from query
 async function searchAlbums(query) {
-    if (query == "") return; //if empty, can require search tags, but dont need to
-    //console.log(getCookie('spotifyAccessToken'))
+    document.getElementById("search_error").innerHTML = "<br>"
+    if (query == "") { //if empty, can require search tags, but dont need to
+        if (document.getElementById('search_tags2').value != "") {
+            document.getElementById("search_error").innerHTML = `<font color='red'>Album Guess required! Try placing the "Song" there.</font>`
+        } else {
+            document.getElementById("search_error").innerHTML = `<font color='red'>Album Guess required!</font>`
+        }
+        return;
+    }
     $.ajax({
         url: 'https://api.spotify.com/v1/search',
         data: {
@@ -46,15 +53,19 @@ async function searchAlbums(query) {
             'Authorization': 'Bearer ' + await getToken()
         },
         success: function (response) {
-            //console.log(response.albums)
+            console.log(response)
             albumSearches = response.albums.items
             i = 0; //reset position in albumSearches array
             //display the top result
             if (albumSearches[0]) {
                 if (getHashParams().guess != query) {
-                    window.location.hash = "#guess=" + encodeURIComponent(query)
+                    var searchUrl = "#guess=" + encodeURIComponent(query)
+                    var song = document.getElementById('search_tags2').value
+                    if (song != "") {
+                        searchUrl += "&song=" + encodeURIComponent(song)
+                    }
+                    window.location.hash = searchUrl
                 }
-                document.getElementById("search_error").innerHTML = "<br>"
                 displayAlbum(albumSearches[0])
             }
             else {
@@ -135,20 +146,21 @@ async function fetchTracks(albumId) {
                 var tracksDiv = document.getElementById("tracks")
                 tracksDiv.innerHTML = null
                 var tracks = response.items
-                var song = getHashParams().song
+                var song = document.getElementById('search_tags2').value
                 for (let j = 0; j < tracks.length; j++) {
                     //console.log(response.items[i].name)
                     //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
                     tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
                 }
                 console.log(song)
-                if (song != undefined) {
-                    console.log(tracks)
+                if (song != "") {
+                    document.getElementById("search_error").innerHTML = "<br>"
+                    //console.log(tracks)
                     var index = tracks.findIndex(function (track) {
                         return track.name == song
                     })
-                    console.log(index)
-                    if (index < 1) {
+                    //console.log(index)
+                    if (index > -1) {
                         tracksDiv.selectedIndex = index
                     } else {
                         document.getElementById("search_error").innerHTML = `<font color='red'>${song} not found in album!</font>`

@@ -11,9 +11,11 @@
         VinylVision Spotify Album Player
     </h1>
 
-    <div id="search">
-        <label for="search_tags">Search:</label>
+    <div id="search">   
+        <label for="search_tags">Album:</label>
         <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+        <label for="search_tags">Song:</label>
+        <input type="text" name="search_tags2" id="search_tags2" placeholder="Song Guess (Exact Match)" style="width:300px"><br><br>
         <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
         <div id="search_error">
             <br>
@@ -46,16 +48,26 @@
 
     <script>
         //check if there's a guess in the parameters and autofill in the fields
-        var guess = getHashParams().guess
+        var hash = getHashParams()
+        var guess = hash.guess
+        var song = hash.song
         if (guess != undefined) {
             document.getElementById('search_tags').value = guess
+            if (song != undefined) {
+                document.getElementById('search_tags2').value = song
+            }
             searchAlbums(guess)
         }
         window.addEventListener('hashchange', function () {
             //window.history.pushState({}, null, myOldUrl);
-            var guess = getHashParams().guess
+            hash = getHashParams()
+            guess = hash.guess
+            song = hash.song
             if (guess != undefined) {
                 document.getElementById('search_tags').value = guess
+                if (song != undefined) {
+                    document.getElementById('search_tags2').value = song
+                }
                 searchAlbums(guess)
             }
         });
