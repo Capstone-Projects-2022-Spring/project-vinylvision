@@ -156,8 +156,9 @@ async function fetchTracks(albumId) {
                 if (song != "") {
                     document.getElementById("search_error").innerHTML = "<br>"
                     //console.log(tracks)
+                    var songSearch = song.toLowerCase()
                     var index = tracks.findIndex(function (track) {
-                        return track.name == song
+                        return (track.name).toLowerCase() == songSearch
                     })
                     //console.log(index)
                     if (index > -1) {
