@@ -15,7 +15,7 @@
         <label for="search_tags">Album:</label>
         <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
         <label for="search_tags">Song:</label>
-        <input type="text" name="search_tags2" id="search_tags2" placeholder="Song Guess (Exact Match)" style="width:300px"><br><br>
+        <input type="text" name="search_tags2" id="search_tags2" placeholder="Song Guess" style="width:300px"><br><br>
         <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
         <div id="search_error">
             <br>
@@ -24,20 +24,21 @@
     <br>
     <div id="player">
 
-        <label for="artist" id="artist_text">Artist:</label>
-        <input name="artist" id="artist" readonly style="width:400px"><br><br>
+        <a for="artist" id="artist_text">Artist:</a>
+        <a name="artist" id="artist" style="width:500px"></a><br><br>
 
-        <label for="album_name" data-uri="" data-url="">Album:</label>
-        <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
+        <a for="album_name" data-uri="" data-url="">Album:</a>
+        <a name="album_name" id="album_name" style="width:500px"></a><br><br>
+
         <div id="imageDiv"></div><br>
         <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
 
-        <label for="tracks">Tracks:</label>
+        <a for="tracks">Tracks:</a>
         <select name="tracks" id="tracks"></select><br><br>
         <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
         <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
         <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
-        <label for="tracks">Artists:</label>
+        <a for="tracks">Artists:</a>
         <select name="artist_select" id="artist_select"></select><br><br>
         <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
     </div>

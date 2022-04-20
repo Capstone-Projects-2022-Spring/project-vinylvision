@@ -33,9 +33,10 @@ var i = 0;
 
 //search for an album with the tags from query
 async function searchAlbums(query) {
+    var songDivVal = document.getElementById('search_tags2').value
     document.getElementById("search_error").innerHTML = "<br>"
     if (query == "") { //if empty, can require search tags, but dont need to
-        if (document.getElementById('search_tags2').value != "") {
+        if (songDivVal != "") {
             document.getElementById("search_error").innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
         } else {
             document.getElementById("search_error").innerHTML = `<font color='red'>Album Guess required!</font>`
@@ -53,16 +54,16 @@ async function searchAlbums(query) {
             'Authorization': 'Bearer ' + await getToken()
         },
         success: function (response) {
-            console.log(response)
+            //console.log(response)
             albumSearches = response.albums.items
             i = 0; //reset position in albumSearches array
             //display the top result
             if (albumSearches[0]) {
-                if (getHashParams().guess != query) {
+                var hash = getHashParams()
+                if (hash.guess != query || hash.song != songDivVal){
                     var searchUrl = "#guess=" + encodeURIComponent(query)
-                    var song = document.getElementById('search_tags2').value
-                    if (song != "") {
-                        searchUrl += "&song=" + encodeURIComponent(song)
+                    if (songDivVal != "") {
+                        searchUrl += "&song=" + encodeURIComponent(songDivVal)
                     }
                     window.location.hash = searchUrl
                 }
@@ -110,20 +111,21 @@ function displayAlbum(album) {
 
     //add album name
     var albumNameDiv = document.getElementById("album_name")
-    albumNameDiv.value = album.name
+    albumNameDiv.innerText = album.name
     albumNameDiv.dataset.uri = album.uri //add uri (), this is used for play() (unused)
     albumNameDiv.dataset.url = album.external_urls.spotify //add url, this is opened when using "openTrack"
 
     //add artist names
     var artistDiv = document.getElementById("artist")
-    artistDiv.value = album.artists[0].name
-    document.getElementById("artist_text").innerHTML = "Artist:"
+    artistDiv.innerText = album.artists[0].name
+    var artistTextDiv = document.getElementById("artist_text")
+    artistTextDiv.innerText = "Artist:"
+    //for selecting to search the artist
     var artistSelectDiv = document.getElementById("artist_select")
-    artistSelectDiv.innerHTML = null
     artistSelectDiv.innerHTML = `<option>${album.artists[0].name}</option>`
     for (let j = 1; j < album.artists.length; j++) {
-        document.getElementById("artist_text").innerHTML = "Artists:"
-        artistDiv.value += ", " + album.artists[j].name
+        if(j==1) artistTextDiv.innerText = "Artists:"
+        artistDiv.innerText += ", " + album.artists[j].name
         artistSelectDiv.innerHTML += '<option>' + album.artists[j].name + '</option>'
     }
 
@@ -152,15 +154,15 @@ async function fetchTracks(albumId) {
                     //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
                     tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
                 }
-                console.log(song)
+                //console.log(song)
                 if (song != "") {
                     document.getElementById("search_error").innerHTML = "<br>"
-                    //console.log(tracks)
-                    var songSearch = song.toLowerCase()
+                    //this is just to allow case insensitive searches (search uses this object)
+                    var songSearch = new RegExp(song, 'i')
                     var index = tracks.findIndex(function (track) {
-                        return (track.name).toLowerCase() == songSearch
+                        //console.log((track.name).search(song))
+                        return (track.name).search(songSearch) > -1
                     })
-                    //console.log(index)
                     if (index > -1) {
                         tracksDiv.selectedIndex = index
                     } else {
@@ -189,11 +191,12 @@ function removeAlbum() {
     document.getElementById("imageDiv").innerHTML = null
 
     var albumNameDiv = document.getElementById("album_name")
-    albumNameDiv.value = ""
+    albumNameDiv.innerText = ""
     albumNameDiv.dataset.uri = ""
     albumNameDiv.dataset.url = ""
 
-    document.getElementById("artist").value = null
+    document.getElementById("artist").innerText = ""
+    document.getElementById("artist_select").innerHTML = ""
     removeTracks()
 }
 
