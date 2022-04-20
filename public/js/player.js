@@ -27,19 +27,24 @@ function getCookie(cname) {
     }
     return "";
 }
+/*Store all the divs that won't change*/
+var errorDiv
+var songDivVal
+
 
 var albumSearches = null
 var i = 0;
 
 //search for an album with the tags from query
 async function searchAlbums(query) {
-    var songDivVal = document.getElementById('search_tags2').value
-    document.getElementById("search_error").innerHTML = "<br>"
+    errorDiv = document.getElementById("search_error")
+    songDivVal = document.getElementById('search_tags2').value
+    errorDiv.innerHTML = "<br>"
     if (query == "") { //if empty, can require search tags, but dont need to
         if (songDivVal != "") {
-            document.getElementById("search_error").innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
+            errorDiv.innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
         } else {
-            document.getElementById("search_error").innerHTML = `<font color='red'>Album Guess required!</font>`
+            errorDiv.innerHTML = `<font color='red'>Album Guess required!</font>`
         }
         return;
     }
@@ -58,7 +63,7 @@ async function searchAlbums(query) {
             albumSearches = response.albums.items
             i = 0; //reset position in albumSearches array
             //display the top result
-            if (albumSearches[0]) {
+            if (albumSearches[0]) { //if album searches
                 var hash = getHashParams()
                 if (hash.guess != query || hash.song != songDivVal){
                     var searchUrl = "#guess=" + encodeURIComponent(query)
@@ -69,9 +74,9 @@ async function searchAlbums(query) {
                 }
                 displayAlbum(albumSearches[0])
             }
-            else {
+            else { //no albums found
                 removeAlbum()
-                document.getElementById("search_error").innerHTML = "<font color='red'>No search results found!</font>"
+                errorDiv.innerHTML = "<font color='red'>No search results found!</font>"
             }
         }
     });
@@ -81,6 +86,7 @@ async function searchArtistAlbums() {
     //console.log(albumSearches[i])
     //var artist = albumSearches[i].artists[0].name
     //var artist = document.getElementById("artist").value
+    document.getElementById('search_tags2').value = ""
     var artist = document.getElementById("artist_select").value
     if (artist != "") {
         document.getElementById('search_tags').value = artist
@@ -95,19 +101,18 @@ function nextSearchResult(j) {
     //albumSearches exists and bounds of i: 0-4
     if (albumSearches && (0 <= (i + j) && (i + j) < 10)) {
         i += j
-        if (albumSearches[i]) { //if theres even enough search results (ive never caught this error)
+        if (albumSearches[i]) //if theres even enough search results (ive never caught this error)
             displayAlbum(albumSearches[i])
-        }
-        else { //if there's not a result, revert the change
+        else //if there's not a result, revert the change
             i -= j
-        }
     }
 }
 
 function displayAlbum(album) {
-    //console.log(album)
-    //console.log(album.name)
-    document.getElementById("imageDiv").innerHTML = `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
+    document.getElementById("imageDiv").innerHTML =
+        `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
+
+    document.getElementById("release_date").innerText = album.release_date
 
     //add album name
     var albumNameDiv = document.getElementById("album_name")
@@ -143,35 +148,38 @@ async function fetchTracks(albumId) {
                 'Authorization': 'Bearer ' + await getToken()
             },
             success: function (response) {
-                //console.log(response)
                 //add tracks to dropdown
                 var tracksDiv = document.getElementById("tracks")
                 tracksDiv.innerHTML = null
                 var tracks = response.items
-                var song = document.getElementById('search_tags2').value
                 for (let j = 0; j < tracks.length; j++) {
-                    //console.log(response.items[i].name)
                     //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
                     tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
                 }
-                //console.log(song)
+                //search for the song in song guess bar
+                var song = songDivVal
                 if (song != "") {
-                    document.getElementById("search_error").innerHTML = "<br>"
+                    errorDiv.innerHTML = "<br>"
                     //this is just to allow case insensitive searches (search uses this object)
-                    var songSearch = new RegExp(song, 'i')
-                    var index = tracks.findIndex(function (track) {
-                        //console.log((track.name).search(song))
-                        return (track.name).search(songSearch) > -1
-                    })
+                    var index = searchSong(tracks, song)
                     if (index > -1) {
                         tracksDiv.selectedIndex = index
                     } else {
-                        document.getElementById("search_error").innerHTML = `<font color='red'>${song} not found in album!</font>`
+                        errorDiv.innerHTML = `<font color='red'>${song} not found in album!</font>`
                     }
                 }
             }
         });
 };
+
+function searchSong(tracks, song) {
+    var songSearch = new RegExp(song, 'i')
+    var index = tracks.findIndex(function (track) {
+        //console.log((track.name).search(song))
+        return (track.name).search(songSearch) > -1
+    })
+    return index
+}
 
 function playAlbum() {
     var dataUrl = document.getElementById("album_name").getAttribute("data-url")
@@ -196,7 +204,8 @@ function removeAlbum() {
     albumNameDiv.dataset.url = ""
 
     document.getElementById("artist").innerText = ""
-    document.getElementById("artist_select").innerHTML = ""
+    document.getElementById("artist_select").innerHTML = null
+    document.getElementById("release_date").innerText = ""
     removeTracks()
 }
 

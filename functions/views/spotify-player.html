@@ -24,11 +24,14 @@
     <br>
     <div id="player">
 
-        <a for="artist" id="artist_text">Artist:</a>
-        <a name="artist" id="artist" style="width:500px"></a><br><br>
+        <a id="artist_text">Artist:</a>
+        <a id="artist" style="width:500px"></a><br><br>
 
-        <a for="album_name" data-uri="" data-url="">Album:</a>
-        <a name="album_name" id="album_name" style="width:500px"></a><br><br>
+        <a data-uri="" data-url="">Album:</a>
+        <a id="album_name" style="width:500px"></a><br><br>
+
+        <a>Released:</a>
+        <a id="release_date" style="width:500px"></a><br><br>
 
         <div id="imageDiv"></div><br>
         <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
@@ -49,13 +52,15 @@
 
     <script>
         //check if there's a guess in the parameters and autofill in the fields
+        var albumSearchDiv = document.getElementById('search_tags')
+        var songSearchDiv = document.getElementById('search_tags2')
         var hash = getHashParams()
         var guess = hash.guess
         var song = hash.song
         if (guess != undefined) {
-            document.getElementById('search_tags').value = guess
+            albumSearchDiv.value = guess
             if (song != undefined) {
-                document.getElementById('search_tags2').value = song
+                songSearchDiv.value = song
             }
             searchAlbums(guess)
         }
@@ -65,27 +70,31 @@
             guess = hash.guess
             song = hash.song
             if (guess != undefined) {
-                document.getElementById('search_tags').value = guess
-                if (song != undefined) {
-                    document.getElementById('search_tags2').value = song
-                }
+                albumSearchDiv.value = guess
+                if (song != undefined)
+                    songSearchDiv.value = song
+                else
+                    songSearchDiv.value = null
                 searchAlbums(guess)
             }
+            else
+                albumSearchDiv.value = null
         });
 
+        var searchButton = document.getElementById("search_button")
         //add event listener to search bar so that pressing enter searches it
-        // Get the input field
-        var input = document.getElementById("search_tags");
-        // Execute a function when the user releases a key on the keyboard
-        input.addEventListener("keyup", function (event) {
+        searchEnterListener = function (event) {
             // Number 13 is the "Enter" key on the keyboard
             if (event.keyCode === 13) {
                 // Cancel the default action, if needed
                 event.preventDefault();
                 // Trigger the button element with a click
-                document.getElementById("search_button").click();
+                searchButton.click();
             }
-        });
+        }
+        // Execute a function when the user releases a key on the keyboard
+        albumSearchDiv.addEventListener("keyup", searchEnterListener);
+        songSearchDiv.addEventListener("keyup", searchEnterListener);
 
             //impossible to use without premium
         /*function play(accessToken) {
