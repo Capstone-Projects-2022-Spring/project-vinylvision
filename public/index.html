@@ -116,7 +116,7 @@
                             } else {
                                 search = response.result.title + " " + response.result.artist
                             }
-                            document.getElementById('login2').innerHTML = `<a href='spotify/login/:searchsong?guess=${encodeURIComponent(search)}&song=${encodeURIComponent(response.result.title)}' type='button'>Search with Spotify</a>`
+                            document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${encodeURIComponent(search)}&song=${encodeURIComponent(response.result.title)}' type='button'>Search with Spotify</a>`
                             //document.getElementById('login2').innerHTML = `<a href='spotify/login/:searchsong?guess=joey&song=bob' type='button'>Search with Spotify</a>`
                             //console.log(document.getElementById('login2').innerHTML)
                             //document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${encodeURLComponent(search)}' type='button'>Search with Spotify</a>`

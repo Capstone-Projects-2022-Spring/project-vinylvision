@@ -26,8 +26,8 @@ var generateRandomString = function (length) {
     return text;
 };
 
-var guessVar = "";
-var songVar = "";
+var guessVar = undefined;
+var songVar = undefined;
 
 //var stateKey = 'spotify_auth_state';
 
@@ -57,24 +57,13 @@ app.get('/spotify/login', function (req, res) {
 });
 
 
-//send to spotify's site and check for has parameter in the format /spotify/login/:search?guess=someResponse
-app.get('/spotify/login/:searchsong', function (req, res) {
+/*send to spotify's site and check for has parameter in the format
+ * search album:        /spotify/login/:search?guess=someResponse
+ * search album & song: /spotify/login/:search?guess=someResponse&song=someResponse*/
+app.get('/spotify/login/:search', function (req, res) {
 
     guessVar = req.query.guess //store guess to send to redirect
     songVar = req.query.song //store song to send to redirect
-
-    state = generateRandomString(16);
-
-    // your application requests authorization
-    res.redirect('https://accounts.spotify.com/authorize?' +
-        spotify.getAuthQueryString(state));
-});
-
-//send to spotify's site and check for has parameter in the format /spotify/login/:search?guess=someResponse
-app.get('/spotify/login/:search', function (req, res) {
-
-    guessVar = req.query //store guess to send to redirect
-    songVar = ""
 
     state = generateRandomString(16);
     //res.cookie(stateKey, state);
@@ -116,9 +105,9 @@ app.get('/spotify/callback', function (req, res) {
 
                 spotify.setCookies(res, body) //store cookies for access and refresh token
 
-                if (guessVar != "") { //send guess to redirect
+                if (guessVar != undefined) { //send guess to redirect
                     var redirect = projectUrl + '/spotify#guess=' + encodeURIComponent(guessVar)
-                    if (songVar != "") {
+                    if (songVar != undefined) {
                         redirect += '&song=' + encodeURIComponent(songVar)
                     }
                     res.redirect(redirect);
