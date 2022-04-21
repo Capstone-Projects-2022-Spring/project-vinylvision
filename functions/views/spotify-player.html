@@ -12,14 +12,12 @@
     </h1>
 
     <div id="search">   
-        <label for="search_tags">Album:</label>
-        <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
-        <label for="search_tags">Song:</label>
-        <input type="text" name="search_tags2" id="search_tags2" placeholder="Song Guess" style="width:300px"><br><br>
+        <label>Album:</label>
+        <input type="text" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+        <label>Song:</label>
+        <input type="text" id="search_tags2" placeholder="Song Guess" style="width:300px"><br><br>
         <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
-        <div id="search_error">
-            <br>
-        </div>
+        <font color='red' id="error_text" style="white-space: pre-line "><br></font>
     </div>
     <br>
     <div id="player">
@@ -85,16 +83,17 @@
         //add event listener to search bar so that pressing enter searches it
         searchEnterListener = function (event) {
             // Number 13 is the "Enter" key on the keyboard
-            if (event.keyCode === 13) {
+            if (event.which === 13) {
                 // Cancel the default action, if needed
                 event.preventDefault();
                 // Trigger the button element with a click
                 searchButton.click();
             }
         }
+
         // Execute a function when the user releases a key on the keyboard
-        albumSearchDiv.addEventListener("keyup", searchEnterListener);
-        songSearchDiv.addEventListener("keyup", searchEnterListener);
+        albumSearchDiv.addEventListener("keypress", searchEnterListener);
+        songSearchDiv.addEventListener("keypress", searchEnterListener);
 
             //impossible to use without premium
         /*function play(accessToken) {

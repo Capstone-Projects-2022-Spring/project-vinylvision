@@ -41,13 +41,13 @@ var i = 0;
 async function searchAlbums(query) {
     songDivVal = document.getElementById('search_tags2').value
     if (previousSearch[0] != query) {
-        errorDiv = document.getElementById("search_error")
-        errorDiv.innerHTML = "<br>"
+        errorDiv = document.getElementById("error_text")
+        errorDiv.textContent = "\r\n"
         if (query == "") { //if empty, can require search tags, but dont need to
             if (songDivVal != "") {
-                errorDiv.innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
+                errorDiv.textContent = "Song Search not supported! Please fill in Album Guess."
             } else {
-                errorDiv.innerHTML = `<font color='red'>Album Guess required!</font>`
+                errorDiv.textContent = "Album Guess required!"
             }
             return;
         }
@@ -75,8 +75,8 @@ async function searchAlbums(query) {
                     fetchAllTracks(albumSearches)
                 }
                 else { //no albums found
-                    removeAlbum()
-                    errorDiv.innerHTML = "<font color='red'>No search results found!</font>"
+                    //removeAlbum()
+                    errorDiv.textContent = "No search results found!"
                 }
             }
         });
@@ -123,25 +123,25 @@ async function displayAlbum(album) {
     document.getElementById("imageDiv").innerHTML =
         `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
 
-    document.getElementById("release_date").innerText = album.release_date
+    document.getElementById("release_date").textContent = album.release_date
 
     //add album name
     var albumNameDiv = document.getElementById("album_name")
-    albumNameDiv.innerText = album.name
+    albumNameDiv.textContent = album.name
     albumNameDiv.dataset.uri = album.uri //add uri (), this is used for play() (unused)
     albumNameDiv.dataset.url = album.external_urls.spotify //add url, this is opened when using "openTrack"
 
     //add artist names
     var artistDiv = document.getElementById("artist")
-    artistDiv.innerText = album.artists[0].name
+    artistDiv.textContent = album.artists[0].name
     var artistTextDiv = document.getElementById("artist_text")
-    artistTextDiv.innerText = "Artist:"
+    artistTextDiv.textContent = "Artist:"
     //for selecting to search the artist
     var artistSelectDiv = document.getElementById("artist_select")
     artistSelectDiv.innerHTML = `<option>${album.artists[0].name}</option>`
     for (let j = 1; j < album.artists.length; j++) {
-        if(j==1) artistTextDiv.innerText = "Artists:"
-        artistDiv.innerText += ", " + album.artists[j].name
+        if(j==1) artistTextDiv.textContent = "Artists:"
+        artistDiv.textContent += ", " + album.artists[j].name
         artistSelectDiv.innerHTML += '<option>' + album.artists[j].name + '</option>'
     }
 }
@@ -185,13 +185,13 @@ async function searchTracks(tracks, song) {
     var tracksDiv = document.getElementById("tracks")
     //search for the song in song guess bar
     if (song != "") {
-        errorDiv.innerHTML = "<br>"
+        errorDiv.textContent = "\r\n"
         //this is just to allow case insensitive searches (search uses this object)
         var index = searchSong(tracks, song)
         if (index > -1) {
             tracksDiv.selectedIndex = index
         } else {
-            errorDiv.innerHTML = `<font color='red'>${song} not found in album!</font>`
+            errorDiv.textContent = `${song} not found in album!`
         }
     }
 }
@@ -219,19 +219,20 @@ function playTrack() {
     }
 }
 
-function removeAlbum() {
+/*function removeAlbum() {
+    //$("#player").hide()
     document.getElementById("imageDiv").innerHTML = null
 
     var albumNameDiv = document.getElementById("album_name")
-    albumNameDiv.innerText = ""
+    albumNameDiv.textContent = ""
     albumNameDiv.dataset.uri = ""
     albumNameDiv.dataset.url = ""
 
-    document.getElementById("artist").innerText = ""
+    document.getElementById("artist").textContent = ""
     document.getElementById("artist_select").innerHTML = null
-    document.getElementById("release_date").innerText = ""
+    document.getElementById("release_date").textContent = ""
     document.getElementById("tracks").innerHTML = null
-}
+}*/
 
 async function getToken() {
     var access = getCookie('spotifyAccessToken')
