@@ -30,6 +30,7 @@ function getCookie(cname) {
 /*Store all the divs that won't change*/
 var errorDiv
 var songDivVal
+var previousSearch = [2]
 
 
 var albumSearches = null
@@ -38,52 +39,61 @@ var i = 0;
 
 //search for an album with the tags from query
 async function searchAlbums(query) {
-    errorDiv = document.getElementById("search_error")
     songDivVal = document.getElementById('search_tags2').value
-    errorDiv.innerHTML = "<br>"
-    if (query == "") { //if empty, can require search tags, but dont need to
-        if (songDivVal != "") {
-            errorDiv.innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
-        } else {
-            errorDiv.innerHTML = `<font color='red'>Album Guess required!</font>`
+    if (previousSearch[0] != query) {
+        errorDiv = document.getElementById("search_error")
+        errorDiv.innerHTML = "<br>"
+        if (query == "") { //if empty, can require search tags, but dont need to
+            if (songDivVal != "") {
+                errorDiv.innerHTML = `<font color='red'>Song Search not supported! Please fill in Album Guess.</font>`
+            } else {
+                errorDiv.innerHTML = `<font color='red'>Album Guess required!</font>`
+            }
+            return;
         }
-        return;
-    }
-    $.ajax({
-        url: 'https://api.spotify.com/v1/search',
-        data: {
-            q: query,
-            type: 'album',
-            limit: 10
-        },
-        headers: {
-            'Authorization': 'Bearer ' + await getToken()
-        },
-        success: function (response) {
-            //console.log(response)
-            albumSearches = response.albums.items
-            i = 0; //reset position in albumSearches array
-            //display the top result
-            if (albumSearches[0]) { //if album searches
-                var hash = getHashParams()
-                if (hash.guess != query || hash.song != songDivVal){
-                    var searchUrl = "#guess=" + encodeURIComponent(query)
-                    if (songDivVal != "") {
-                        searchUrl += "&song=" + encodeURIComponent(songDivVal)
-                    }
-                    window.location.hash = searchUrl
+        $.ajax({
+            url: 'https://api.spotify.com/v1/search',
+            data: {
+                q: query,
+                type: 'album',
+                limit: 10
+            },
+            headers: {
+                'Authorization': 'Bearer ' + await getToken()
+            },
+            success: function (response) {
+                //console.log(response)
+                albumSearches = response.albums.items
+                i = 0; //reset position in albumSearches array
+                previousSearch[0] = query //set previous guesses
+                previousSearch[1] = songDivVal
+                //display the top result
+                if (albumSearches[0]) { //if album searches
+                    encodeHash(query, songDivVal)
+                    displayAlbum(albumSearches[0])
+                    //then fetch the tracks
+                    fetchAllTracks(albumSearches)
                 }
-                displayAlbum(albumSearches[0])
-                //then fetch the tracks
-                fetchAllTracks(albumSearches)
+                else { //no albums found
+                    removeAlbum()
+                    errorDiv.innerHTML = "<font color='red'>No search results found!</font>"
+                }
             }
-            else { //no albums found
-                removeAlbum()
-                errorDiv.innerHTML = "<font color='red'>No search results found!</font>"
-            }
-        }
-    });
+        });
+    } else if (previousSearch[1] != songDivVal) {
+        previousSearch[1] = songDivVal //set previous guess
+        encodeHash(query, songDivVal)
+        searchTracks(trackSearches[i], songDivVal)
+    }
 };
+
+async function encodeHash(guess, song) {
+    var searchUrl = "#guess=" + encodeURIComponent(guess)
+    if (song != "") {
+        searchUrl += "&song=" + encodeURIComponent(song)
+    }
+    window.location.hash = searchUrl
+}
 
 async function searchArtistAlbums() {
     document.getElementById('search_tags2').value = ""
@@ -161,15 +171,19 @@ async function fetchTracks(albumId, pos) {
     return result.items
 };
 
-async function displayTracks(tracks, song) {
+async function displayTracks(tracks) {
     var tracksDiv = document.getElementById("tracks")
     tracksDiv.innerHTML = null
     for (let j = 0; j < tracks.length; j++) {
         //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
         tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
     }
+    searchTracks(tracks, songDivVal)
+}
+
+async function searchTracks(tracks, song) {
+    var tracksDiv = document.getElementById("tracks")
     //search for the song in song guess bar
-    var song = songDivVal
     if (song != "") {
         errorDiv.innerHTML = "<br>"
         //this is just to allow case insensitive searches (search uses this object)
