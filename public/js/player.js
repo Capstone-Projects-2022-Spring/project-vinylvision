@@ -33,6 +33,7 @@ var songDivVal
 
 
 var albumSearches = null
+var trackSearches = []
 var i = 0;
 
 //search for an album with the tags from query
@@ -73,6 +74,8 @@ async function searchAlbums(query) {
                     window.location.hash = searchUrl
                 }
                 displayAlbum(albumSearches[0])
+                //then fetch the tracks
+                fetchAllTracks(albumSearches)
             }
             else { //no albums found
                 removeAlbum()
@@ -83,9 +86,6 @@ async function searchAlbums(query) {
 };
 
 async function searchArtistAlbums() {
-    //console.log(albumSearches[i])
-    //var artist = albumSearches[i].artists[0].name
-    //var artist = document.getElementById("artist").value
     document.getElementById('search_tags2').value = ""
     var artist = document.getElementById("artist_select").value
     if (artist != "") {
@@ -101,14 +101,15 @@ function nextSearchResult(j) {
     //albumSearches exists and bounds of i: 0-4
     if (albumSearches && (0 <= (i + j) && (i + j) < 10)) {
         i += j
-        if (albumSearches[i]) //if theres even enough search results (ive never caught this error)
+        if (albumSearches[i] && trackSearches[i]) { //if theres even enough search results (ive never caught this error)
             displayAlbum(albumSearches[i])
-        else //if there's not a result, revert the change
+            displayTracks(trackSearches[i])
+        } else //if there's not a result, revert the change
             i -= j
     }
 }
 
-function displayAlbum(album) {
+async function displayAlbum(album) {
     document.getElementById("imageDiv").innerHTML =
         `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
 
@@ -133,44 +134,53 @@ function displayAlbum(album) {
         artistDiv.innerText += ", " + album.artists[j].name
         artistSelectDiv.innerHTML += '<option>' + album.artists[j].name + '</option>'
     }
-
-    //then fetch the tracks
-    fetchTracks(album.id)
 }
 
-async function fetchTracks(albumId) {
-    $.ajax({
-            url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
-            data: {
-                limit: 50
-            },
-            headers: {
-                'Authorization': 'Bearer ' + await getToken()
-            },
-            success: function (response) {
-                //add tracks to dropdown
-                var tracksDiv = document.getElementById("tracks")
-                tracksDiv.innerHTML = null
-                var tracks = response.items
-                for (let j = 0; j < tracks.length; j++) {
-                    //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
-                    tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
-                }
-                //search for the song in song guess bar
-                var song = songDivVal
-                if (song != "") {
-                    errorDiv.innerHTML = "<br>"
-                    //this is just to allow case insensitive searches (search uses this object)
-                    var index = searchSong(tracks, song)
-                    if (index > -1) {
-                        tracksDiv.selectedIndex = index
-                    } else {
-                        errorDiv.innerHTML = `<font color='red'>${song} not found in album!</font>`
-                    }
-                }
-            }
-        });
+async function fetchAllTracks() {
+    trackSearches[0] = await fetchTracks(albumSearches[0].id, 0)
+    displayTracks(trackSearches[0])
+    for (let k = 1; k < albumSearches.length; k++) {
+        fetchTracks(albumSearches[k].id, k)
+    }
+}
+
+async function fetchTracks(albumId, pos) {
+    var result = await $.ajax({
+        url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
+        data: {
+            limit: 50
+        },
+        headers: {
+            'Authorization': 'Bearer ' + await getToken()
+        },
+        success: function (response) {
+            trackSearches[pos] = response.items
+            //console.log(trackSearches[pos])
+        }
+    });
+    return result.items
 };
+
+async function displayTracks(tracks, song) {
+    var tracksDiv = document.getElementById("tracks")
+    tracksDiv.innerHTML = null
+    for (let j = 0; j < tracks.length; j++) {
+        //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
+        tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
+    }
+    //search for the song in song guess bar
+    var song = songDivVal
+    if (song != "") {
+        errorDiv.innerHTML = "<br>"
+        //this is just to allow case insensitive searches (search uses this object)
+        var index = searchSong(tracks, song)
+        if (index > -1) {
+            tracksDiv.selectedIndex = index
+        } else {
+            errorDiv.innerHTML = `<font color='red'>${song} not found in album!</font>`
+        }
+    }
+}
 
 function searchSong(tracks, song) {
     var songSearch = new RegExp(song, 'i')
@@ -206,10 +216,6 @@ function removeAlbum() {
     document.getElementById("artist").innerText = ""
     document.getElementById("artist_select").innerHTML = null
     document.getElementById("release_date").innerText = ""
-    removeTracks()
-}
-
-function removeTracks() {
     document.getElementById("tracks").innerHTML = null
 }
 
