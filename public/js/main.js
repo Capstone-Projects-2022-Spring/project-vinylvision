@@ -15,6 +15,35 @@
 
 var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + window.apiKey;
 
+const censor = [
+  'album',
+  'artwork',
+  'cover',
+  'vinyl',
+  '[vinyl]',
+  'usa',
+  'import',
+  'lp',
+  '[lp]',
+  'cd',
+  '[cd]',
+  '(album)',
+  'poster',
+  't shirt',
+  't-shirt',
+  'soundtrack',
+  'mfsl',
+  'review',
+  '2015',
+  '2016',
+  '2017',
+  '2018',
+  '2019',
+  '2020',
+  '2021',
+  '2022'
+]
+
 $(function () {
   $('#fileform').on('submit', uploadFiles);
 });
@@ -80,10 +109,18 @@ function displayJSON(data) {
   if (!data) {
     
   }
-    var label = data.responses[0].webDetection.bestGuessLabels[0].label
-    var data2 = ('Your album cover is: \t' + label);
-  //console.log(data2);
+
+
+  var visionGuess = data.responses[0].webDetection.bestGuessLabels[0].label;
+  var visionArray = visionGuess.split(" ");
+  console.log(visionArray)
+  var label = visionArray.filter(x => !censor.includes(x))
+  console.log(label);
+  label = label.join(' ');
+  var data2 = ('Your album cover is: ' + label);
+  console.log(data2);
   var contents = JSON.stringify(data, null, 5);
+  //console.log(contents)
   $('#results').text(data2);
   var evt = new Event('results-displayed');
   evt.results = contents;
