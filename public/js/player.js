@@ -31,6 +31,19 @@ function getCookie(cname) {
 var errorDiv
 var songDivVal
 var previousSearch = [2]
+//error handler for the ajax calls
+var errorHandler = function (response) {
+    console.log(response)
+    var errorMessage
+    if (response.responseJSON && response.responseJSON.error) { //if spotify has error json
+        var error = response.responseJSON.error
+        errorMessage = error.status + ': ' + error.message    
+    } else { //if no error json from spotify
+        errorMessage = response.status
+        if (response.responseText != "") errorMessage += ': ' + response.responseText
+    }
+    errorDiv.textContent = 'Error - ' + errorMessage
+}
 
 
 var albumSearches = null
@@ -78,7 +91,8 @@ async function searchAlbums(query) {
                     //removeAlbum()
                     errorDiv.textContent = "No search results found!"
                 }
-            }
+            },
+            error: errorHandler
         });
     } else if (previousSearch[1] != songDivVal) {
         previousSearch[1] = songDivVal //set previous guess
@@ -132,7 +146,7 @@ async function displayAlbum(album) {
     //add album name
     var albumNameDiv = document.getElementById("album_name")
     albumNameDiv.textContent = album.name
-    albumNameDiv.dataset.uri = album.uri //add uri (), this is used for play() (unused)
+    //albumNameDiv.dataset.uri = album.uri //add uri (), this is used for play() (unused)
     albumNameDiv.dataset.url = album.external_urls.spotify //add url, this is opened when using "openTrack"
 
     //add artist names
@@ -175,14 +189,6 @@ function removeDropDownChildren(div, truelen, divlen) {
     }
 }
 
-async function fetchAllTracks() {
-    trackSearches[0] = await fetchTracks(albumSearches[0].id, 0)
-    displayTracks(trackSearches[0])
-    for (let k = 1; k < albumSearches.length; k++) {
-        fetchTracks(albumSearches[k].id, k)
-    }
-}
-
 async function fetchTracks(albumId, pos) {
     var result = await $.ajax({
         url: 'https://api.spotify.com/v1/albums/' + albumId + '/tracks',
@@ -195,19 +201,29 @@ async function fetchTracks(albumId, pos) {
         success: function (response) {
             trackSearches[pos] = response.items
             //console.log(trackSearches[pos])
-        }
+        },
+        error: errorHandler
     });
     return result.items
 };
 
+async function fetchAllTracks() {
+    trackSearches[0] = await fetchTracks(albumSearches[0].id, 0)
+    displayTracks(trackSearches[0])
+    for (let k = 1; k < albumSearches.length; k++) {
+        fetchTracks(albumSearches[k].id, k)
+    }
+}
+
 async function displayTracks(tracks) {
     var tracksDiv = document.getElementById("tracks")
-    //tracksDiv.innerHTML = null
+    //add tracks
     for (let j = 0; j < tracks.length; j++) {
         addDropDownChild(tracksDiv, tracks[j].name, j, tracks[j].external_urls.spotify)
     }
     //remove extraneous nodes
     removeDropDownChildren(tracksDiv, tracks.length, tracksDiv.childNodes.length)
+    //select the searched track if it finds a match
     searchTracks(tracks, songDivVal)
 }
 
@@ -221,6 +237,7 @@ async function searchTracks(tracks, song) {
         if (index > -1) {
             tracksDiv.selectedIndex = index
         } else {
+            tracksDiv.selectedIndex = 0
             errorDiv.textContent = `${song} not found in album!`
         }
     }
@@ -280,7 +297,8 @@ async function refreshToken() {
         url: '/spotify/refresh_token',
         data: {
             refresh_token: getCookie('spotifyRefreshToken')
-        }
+        },
+        error: errorHandler
     });
     return result.access_token
 }

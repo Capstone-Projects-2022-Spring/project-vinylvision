@@ -11,7 +11,7 @@
         VinylVision Spotify Album Player
     </h1>
 
-    <div id="search">   
+    <div id="search">
         <label>Album:</label>
         <input type="text" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
         <label>Song:</label>
@@ -26,24 +26,26 @@
         <a id="artist_text">Artist:</a>
         <a id="artist" style="width:500px"></a><br><br>
 
-        <a data-uri="" data-url="">Album:</a>
+        <a>Album:</a>
         <a id="album_name" style="width:500px"></a><br><br>
 
         <a>Released:</a>
         <a id="release_date" style="width:500px"></a><br><br>
 
-        <img id="album_image" style="width:200px; height:200px"><br>
+        <img id="album_image" style="width:200px; height:200px"><br><br>
+
+        <a>Tracks:</a>
+        <select id="tracks"></select><br><br>
+        <input type="button" onclick="playTrack()" value="Open Track" />
         <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
 
-        <a for="tracks">Tracks:</a>
-        <select name="tracks" id="tracks"></select><br><br>
-        <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
         <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
         <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
         <a for="tracks">Artists:</a>
         <select name="artist_select" id="artist_select"></select><br><br>
         <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
     </div>
+
     <br>
     <div id="logout">
         <a href="/spotify/logout">Back to Home Page</a>
@@ -96,7 +98,7 @@
         albumSearchDiv.addEventListener("keypress", searchEnterListener);
         songSearchDiv.addEventListener("keypress", searchEnterListener);
 
-            //impossible to use without premium
+                //impossible to use without premium
         /*function play(accessToken) {
             let trackIndex = document.getElementById("tracks").value;
             let albumUri = document.getElementById("album_name").getAttribute("data-uri");
