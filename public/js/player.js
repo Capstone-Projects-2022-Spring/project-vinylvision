@@ -87,8 +87,8 @@ async function searchAlbums(query) {
     }
 };
 
-async function encodeHash(guess, song) {
-    var searchUrl = "#guess=" + encodeURIComponent(guess)
+async function encodeHash(album, song) {
+    var searchUrl = "#album=" + encodeURIComponent(album)
     if (song != "") {
         searchUrl += "&song=" + encodeURIComponent(song)
     }
@@ -120,9 +120,13 @@ function nextSearchResult(j) {
 }
 
 async function displayAlbum(album) {
-    document.getElementById("imageDiv").innerHTML =
-        `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
+    //add image album and alt text
+    $("#album_image").attr({
+        "src": `${album.images[1].url}`,
+        "alt": `${album.name} Album Cover`
+    })
 
+    //add release date
     document.getElementById("release_date").textContent = album.release_date
 
     //add album name
@@ -138,11 +142,36 @@ async function displayAlbum(album) {
     artistTextDiv.textContent = "Artist:"
     //for selecting to search the artist
     var artistSelectDiv = document.getElementById("artist_select")
-    artistSelectDiv.innerHTML = `<option>${album.artists[0].name}</option>`
+    //artistSelectDiv.innerHTML = `<option>${album.artists[0].name}</option>`
+    addDropDownChild(artistSelectDiv, album.artists[0].name, 0)
     for (let j = 1; j < album.artists.length; j++) {
         if(j==1) artistTextDiv.textContent = "Artists:"
         artistDiv.textContent += ", " + album.artists[j].name
-        artistSelectDiv.innerHTML += '<option>' + album.artists[j].name + '</option>'
+        addDropDownChild(artistSelectDiv, album.artists[j].name)
+    }
+    //remove extraneous nodes
+    removeDropDownChildren(artistSelectDiv, album.artists.length, artistSelectDiv.childNodes.length)
+}
+
+function addDropDownChild(div, text, pos, value) {
+    if (div.childNodes[pos]) { //if it exists already just change the contents
+        div.childNodes[pos].textContent = text
+        if(value != null) div.childNodes[pos].value = value
+    } else {
+        var opt = document.createElement('option')
+        opt.textContent = text
+        if (value != null) { //for applying a value with tracks
+            opt.value = value
+        }
+        div.appendChild(opt)
+    }
+}
+
+//remove dropdown extra dropdown children starting from divlen until truelen is reached
+//
+function removeDropDownChildren(div, truelen, divlen) {
+    for (let j = truelen; j < divlen; j++) {
+        div.removeChild(div.lastElementChild)
     }
 }
 
@@ -173,11 +202,12 @@ async function fetchTracks(albumId, pos) {
 
 async function displayTracks(tracks) {
     var tracksDiv = document.getElementById("tracks")
-    tracksDiv.innerHTML = null
+    //tracksDiv.innerHTML = null
     for (let j = 0; j < tracks.length; j++) {
-        //tracks.innerHTML += `<option value=${i}>` + response.items[i].name + '</option>'
-        tracksDiv.innerHTML += `<option value=${tracks[j].external_urls.spotify}>` + tracks[j].name + '</option>'
+        addDropDownChild(tracksDiv, tracks[j].name, j, tracks[j].external_urls.spotify)
     }
+    //remove extraneous nodes
+    removeDropDownChildren(tracksDiv, tracks.length, tracksDiv.childNodes.length)
     searchTracks(tracks, songDivVal)
 }
 

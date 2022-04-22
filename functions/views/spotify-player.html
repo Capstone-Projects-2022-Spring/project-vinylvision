@@ -16,7 +16,8 @@
         <input type="text" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
         <label>Song:</label>
         <input type="text" id="search_tags2" placeholder="Song Guess" style="width:300px"><br><br>
-        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
+        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" /><br>
+
         <font color='red' id="error_text" style="white-space: pre-line "><br></font>
     </div>
     <br>
@@ -31,7 +32,7 @@
         <a>Released:</a>
         <a id="release_date" style="width:500px"></a><br><br>
 
-        <div id="imageDiv"></div><br>
+        <img id="album_image" style="width:200px; height:200px"><br>
         <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
 
         <a for="tracks">Tracks:</a>
@@ -53,27 +54,27 @@
         var albumSearchDiv = document.getElementById('search_tags')
         var songSearchDiv = document.getElementById('search_tags2')
         var hash = getHashParams()
-        var guess = hash.guess
+        var album = hash.album
         var song = hash.song
-        if (guess != undefined) {
-            albumSearchDiv.value = guess
+        if (album != undefined) {
+            albumSearchDiv.value = album
             if (song != undefined) {
                 songSearchDiv.value = song
             }
-            searchAlbums(guess)
+            searchAlbums(album)
         }
         window.addEventListener('hashchange', function () {
             //window.history.pushState({}, null, myOldUrl);
             hash = getHashParams()
-            guess = hash.guess
+            album = hash.album
             song = hash.song
-            if (guess != undefined) {
-                albumSearchDiv.value = guess
+            if (album != undefined) {
+                albumSearchDiv.value = album
                 if (song != undefined)
                     songSearchDiv.value = song
                 else
                     songSearchDiv.value = null
-                searchAlbums(guess)
+                searchAlbums(album)
             }
             else
                 albumSearchDiv.value = null

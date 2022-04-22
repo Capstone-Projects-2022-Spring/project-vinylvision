@@ -30,8 +30,8 @@
         <code style="white-space:pre" id="results"></code>
     </div><br />
 
-    <div id="login">
-
+    <div>
+        <a id="login" style="display: none;">Search with Spotify</a>
     </div>
 
     <div>
@@ -49,12 +49,14 @@
         <h5 class="mt-3">Result</h5>
         <div id="result"></div><br />
 
-        <div id="login2">
-
-        </div><br />
+        <div>
+            <a id="login2" style="display: none;">Search with Spotify</a>
+        </div>
+        <br>
     </div>
 
     <script>
+        var login = $("#login2")
         const input = document.querySelector("#audio-input");
         var file = null;
 
@@ -64,7 +66,7 @@
 
         function submit() {
             if (file) {
-                document.getElementById('login2').innerHTML = null
+                login.hide()
                 var postData = new FormData();
                 postData.append('api_token', 'f515f56c29f1626c4238ac352fa98b18');
                 postData.append('file', file);
@@ -111,15 +113,13 @@
                                             </tr>
                                         </table>`;
                             var search
-                            if (response.result.album != null) {
+                            if (response.result.album != null)
                                 search = response.result.album + " " + response.result.artist
-                            } else {
+                            else
                                 search = response.result.title + " " + response.result.artist
-                            }
-                            document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${encodeURIComponent(search)}&song=${encodeURIComponent(response.result.title)}' type='button'>Search with Spotify</a>`
-                            //document.getElementById('login2').innerHTML = `<a href='spotify/login/:searchsong?guess=joey&song=bob' type='button'>Search with Spotify</a>`
-                            //console.log(document.getElementById('login2').innerHTML)
-                            //document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${encodeURLComponent(search)}' type='button'>Search with Spotify</a>`
+                            login.attr(
+                                "href", `spotify/login/:search?album=${encodeURIComponent(search)}&song=${encodeURIComponent(response.result.title)}`
+                            ).show()
                         }
                     }
                 });

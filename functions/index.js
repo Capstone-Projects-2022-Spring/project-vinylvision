@@ -26,7 +26,7 @@ var generateRandomString = function (length) {
     return text;
 };
 
-var guessVar = undefined;
+var albumVar = undefined;
 var songVar = undefined;
 
 //var stateKey = 'spotify_auth_state';
@@ -58,11 +58,11 @@ app.get('/spotify/login', function (req, res) {
 
 
 /*send to spotify's site and check for has parameter in the format
- * search album:        /spotify/login/:search?guess=someResponse
- * search album & song: /spotify/login/:search?guess=someResponse&song=someResponse*/
+ * search album:        /spotify/login/:search?album=someResponse
+ * search album & song: /spotify/login/:search?album=someResponse&song=someResponse*/
 app.get('/spotify/login/:search', function (req, res) {
 
-    guessVar = req.query.guess //store guess to send to redirect
+    albumVar = req.query.album //store album to send to redirect
     songVar = req.query.song //store song to send to redirect
 
     state = generateRandomString(16);
@@ -105,13 +105,13 @@ app.get('/spotify/callback', function (req, res) {
 
                 spotify.setCookies(res, body) //store cookies for access and refresh token
 
-                if (guessVar != undefined) { //send guess to redirect
-                    var redirect = projectUrl + '/spotify#guess=' + encodeURIComponent(guessVar)
+                if (albumVar != undefined) { //send album to redirect
+                    var redirect = projectUrl + '/spotify#album=' + encodeURIComponent(albumVar)
                     if (songVar != undefined) {
                         redirect += '&song=' + encodeURIComponent(songVar)
                     }
                     res.redirect(redirect);
-                }else { //in case there's no guess
+                }else { //in case there's no album
                     res.redirect(projectUrl + '/spotify');
                 }
                 
