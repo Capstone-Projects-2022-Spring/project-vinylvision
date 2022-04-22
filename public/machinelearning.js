@@ -8,8 +8,19 @@ function main() {
    * (Not necessary if passing values as arguments)
    */
 
+  
+    //event.preventDefault(); // Prevent the default form post
+  
+    // Grab the file and asynchronously convert to base64.
+    const filename = $('#fileform [name=fileField]')[0].files[0];
+    var reader = new FileReader();
+    reader.onloadend = processFile;
+    reader.readAsDataURL(file);
+  
+  
+  
   //const filename = "/Users/aguerrelli/Desktop/BeatlesAbbey_Road.jpg";
-  const filename = "/Users/aguerrelli/Desktop/StoneyCover.jpeg";
+  //const filename = "/Users/aguerrelli/Desktop/StoneyCover.jpeg";
   const endpointId = "6781198381889880064";
   const project = 'tu-vinylvision';
   const location = 'us-central1';
