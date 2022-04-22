@@ -8,8 +8,11 @@ var path = require('path') //for sending files
 require('dotenv').config(); //for loading from env file
 var projectUrl = process.env.PROJECT_URL;
 const spotify = require('./spotify.js');
+const machine = require('./machinelearning.js');
 
-const functions = require('firebase-functions') //for firebase functions
+
+const functions = require('firebase-functions'); //for firebase functions
+const { mainModule } = require('process');
 
 /**
  * Generates a random string containing numbers and letters
@@ -134,6 +137,10 @@ app.get('/spotify/refresh_token', function (req, res) {
         }
     });
 });
+
+app.get('', function (req, res) {
+    main();
+})
 
 //console.log('Listening on ' + serverPORT);
 //app.createServer(router.handleRequest).listen(serverPORT);

@@ -1,4 +1,5 @@
-'use strict';
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+
 require('dotenv').config();
 
 function main() {
@@ -12,8 +13,10 @@ function main() {
     //event.preventDefault(); // Prevent the default form post
   
     // Grab the file and asynchronously convert to base64.
-    const filename = $('#fileform [name=fileField]')[0].files[0];
-    var reader = new FileReader();
+    var filename = ''
+    $(function () {
+      filename = $('#fileform').on('submit', uploadFiles);
+    });    var reader = new FileReader();
     reader.onloadend = processFile;
     reader.readAsDataURL(file);
   
@@ -94,3 +97,7 @@ process.on('unhandledRejection', err => {
 });
 
 main();
+
+module.exports = { //for external use of functions
+  main: main
+}
