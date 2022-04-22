@@ -93,7 +93,7 @@ tr:nth-child(even) {
   opacity: 0;
 }
 
-label {
+#labelSubmit {
   cursor: pointer;
   background-color: #00dcdf;
   color: white;
@@ -106,7 +106,7 @@ label {
   transition-duration: 0.4s;
   border: 2px solid #00dcdf;
 }
-label:hover {
+#labelSubmit:hover {
   background-color: white;
   color: #00dcdf;
   border: 2px solid #00dcdf;
