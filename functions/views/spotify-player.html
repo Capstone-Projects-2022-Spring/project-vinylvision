@@ -47,8 +47,8 @@
 
         <a>Tracks:</a>
         <select id="tracks" onchange="createTrackEmbed(this.options[this.selectedIndex].value)"></select><br><br>
-        <input type="button" onclick="playTrack()" value="Open Track" />
-        <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
+        <input type="button" onclick="openTrack()" value="Open Track" />
+        <input type="button" onclick="openAlbum()" value="Open Album" /><br><br>
 
         <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
         <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
@@ -69,50 +69,48 @@
         //check if there's a guess in the parameters and autofill in the fields
         var albumSearchDiv = document.getElementById('search_tags')
         var songSearchDiv = document.getElementById('search_tags2')
-        var hash = getHashParams()
-        var album = hash.album
-        var song = hash.song
-        if (album != undefined) {
-            albumSearchDiv.value = album
-            if (song != undefined) {
-                songSearchDiv.value = song
-            }
-            searchAlbums(album)
-        }
+        //search album from hash
+        searchAlbumFromHash()
+
+        //add event listener to check if there's a change in the hash
         window.addEventListener('hashchange', function () {
-            //window.history.pushState({}, null, myOldUrl);
-            hash = getHashParams()
-            album = hash.album
-            song = hash.song
-            if (album != undefined) {
+            //window.history.pushState({}, null, myOldUrl); //what the hell is this
+            searchAlbumFromHash()
+        });
+
+        var searchButton = document.getElementById("search_button")
+        //add event listener to search bar for the enter key (13)
+        searchEnterListener = function (event) {
+            if (event.which === 13) {
+                //cancel default action and press the button
+                event.preventDefault()
+                searchButton.click()
+            }
+        }
+
+        //add event listeners to Album Search bar and Song Search bar
+        albumSearchDiv.addEventListener("keypress", searchEnterListener);
+        songSearchDiv.addEventListener("keypress", searchEnterListener);
+
+        /* Call searchAlbums() with the album retrieved from hash
+         * Sets the album and song from the URL within the search bar
+         */
+        function searchAlbumFromHash() {
+            var hash = getHashParams()
+            var album = hash.album
+            var song = hash.song
+            if (album != undefined) { //if album exists
                 albumSearchDiv.value = album
-                if (song != undefined)
+                if (song != undefined) //if song exists, set song value
                     songSearchDiv.value = song
                 else
                     songSearchDiv.value = null
                 searchAlbums(album)
-            }
-            else {
+            } else { //remove the album if no album exists
                 albumSearchDiv.value = null
                 removeAlbum()
             }
-        });
-
-        var searchButton = document.getElementById("search_button")
-        //add event listener to search bar so that pressing enter searches it
-        searchEnterListener = function (event) {
-            // Number 13 is the "Enter" key on the keyboard
-            if (event.which === 13) {
-                // Cancel the default action, if needed
-                event.preventDefault();
-                // Trigger the button element with a click
-                searchButton.click();
-            }
         }
-
-        // Execute a function when the user releases a key on the keyboard
-        albumSearchDiv.addEventListener("keypress", searchEnterListener);
-        songSearchDiv.addEventListener("keypress", searchEnterListener);
     </script>
 </body>
 </html>
