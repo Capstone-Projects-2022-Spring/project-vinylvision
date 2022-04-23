@@ -30,7 +30,7 @@
                 <option value="WEB_DETECTION">WEB_DETECTION</option>
             </select><br />
             <input type="file" name="fileField"><br /><br />
-            <input type="submit" name="submit" value="Submit">
+            <input type="submit" name="submit" value="Upload Album Image">
         </form>
 
         <code style="white-space:pre" id="results"></code>
@@ -47,7 +47,7 @@
                 <input type="file" accept=".mp3" id="audio-input" class="form-control form-control-sm" />
             </div>
             <div class="col">
-                <button class="btn btn-sm btn-primary" onclick="submit()">Upload</button>
+                <button class="btn btn-sm btn-primary" onclick="submit()">Upload Audio File</button>
             </div>
         </div>
 
@@ -74,7 +74,7 @@
             if (file) {
                 login.hide()
                 var postData = new FormData();
-                postData.append('api_token', 'f515f56c29f1626c4238ac352fa98b18');
+                postData.append('api_token', 'd382707b190814f3abd7f249a2227888');
                 postData.append('file', file);
                 postData.append('return', 'spotify');
 
@@ -88,7 +88,6 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        //console.log(response);
 
                         if ((response.result == null) || (response.result.title == 'error')) {
                             result.innerHTML = `<table class="table">  <tr> <td> audio file upload failed </td> </tr> </table>`;
@@ -137,7 +136,8 @@
     <div style="max-width: 28em;">
 
         <select id="encodingTypeSelect">
-            <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
+	    <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
+            <option value="wav">Waveform Audio (.wav)</option>
         </select>
         <div id="controls">
             <button id="recordButton">Record</button>
@@ -178,7 +178,7 @@
             var constraints = { audio: true, video: false }
 
             navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-                __log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
+
 
                 audioContext = new AudioContext();
 
@@ -199,13 +199,7 @@
                 recorder = new WebAudioRecorder(inputMic, {
                     workerDir: "js/", // must end with slash
                     encoding: encodingType,
-                    numChannels: 2,
-                    onEncoderLoading: function (recorder, encoding) {
-                        __log("Loading " + encoding + " encoder...");
-                    },
-                    onEncoderLoaded: function (recorder, encoding) {
-                        __log(encoding + " encoder loaded");
-                    }
+                    numChannels: 2
                 });
 
                 recorder.onComplete = function (recorder, blob) {
@@ -239,7 +233,6 @@
         }
 
         function stopRecording() {
-            console.log("stopRecording() called");
 
             //stop microphone access
             gumStream.getAudioTracks()[0].stop();
