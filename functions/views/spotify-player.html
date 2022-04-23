@@ -15,7 +15,7 @@
         <label>Album:</label>
         <input type="text" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
         <label>Song:</label>
-        <input type="text" id="search_tags2" placeholder="Song Guess" style="width:300px"><br><br>
+        <input type="text" id="search_tags2" placeholder="Song Guess" style="width:311.5px"><br><br>
         <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" /><br>
 
         <font color='red' id="error_text" style="white-space: pre-line "><br></font>
@@ -32,10 +32,14 @@
         <a>Released:</a>
         <a id="release_date" style="width:500px"></a><br><br>
 
-        <img id="album_image" style="width:200px; height:200px"><br><br>
+        <img id="album_image" style="width:200px; height:200px"><br>
+
+        <div id="spotify-embed-track">
+            <iframe id="miniplayer" style="border-radius:12px; width:350px; height:80px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
 
         <a>Tracks:</a>
-        <select id="tracks"></select><br><br>
+        <select id="tracks" onchange="createTrackEmbed(this.options[this.selectedIndex].value)"></select><br><br>
         <input type="button" onclick="playTrack()" value="Open Track" />
         <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
 
@@ -44,9 +48,12 @@
         <a for="tracks">Artists:</a>
         <select name="artist_select" id="artist_select"></select><br><br>
         <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
-    </div>
+    </div><br>
 
-    <br>
+    <div id="spotify-embed-album">
+        <iframe id="miniplayer" style="border-radius:12px; width:350px; height:380px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    </div>
+    
     <div id="logout">
         <a href="/spotify/logout">Back to Home Page</a>
     </div>
@@ -78,8 +85,10 @@
                     songSearchDiv.value = null
                 searchAlbums(album)
             }
-            else
+            else {
                 albumSearchDiv.value = null
+                removeAlbum()
+            }
         });
 
         var searchButton = document.getElementById("search_button")
@@ -97,30 +106,6 @@
         // Execute a function when the user releases a key on the keyboard
         albumSearchDiv.addEventListener("keypress", searchEnterListener);
         songSearchDiv.addEventListener("keypress", searchEnterListener);
-
-                //impossible to use without premium
-        /*function play(accessToken) {
-            let trackIndex = document.getElementById("tracks").value;
-            let albumUri = document.getElementById("album_name").getAttribute("data-uri");
-            console.log(albumUri)
-            $.ajax({
-                method: "PUT",
-                url: 'https://api.spotify.com/v1/me/player/play',
-                data: {
-                    context_uri: albumUri,
-                    offset: {
-                        position: trackIndex
-                    },
-                    position_ms: 0
-                },
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken
-                },
-                success: function (response) {
-                    console.log(response)
-                }
-            });
-        }*/
     </script>
 </body>
 </html>

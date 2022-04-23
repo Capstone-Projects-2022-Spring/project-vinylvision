@@ -88,7 +88,6 @@ async function searchAlbums(query) {
                     fetchAllTracks(albumSearches)
                 }
                 else { //no albums found
-                    //removeAlbum()
                     errorDiv.textContent = "No search results found!"
                 }
             },
@@ -140,6 +139,9 @@ async function displayAlbum(album) {
         "alt": `${album.name} Album Cover`
     })
 
+    //create album embed
+    createEmbed("album", album.id, document.getElementById("spotify-embed-album"))
+
     //add release date
     document.getElementById("release_date").textContent = album.release_date
 
@@ -168,9 +170,10 @@ async function displayAlbum(album) {
 }
 
 function addDropDownChild(div, text, pos, value) {
-    if (div.childNodes[pos]) { //if it exists already just change the contents
-        div.childNodes[pos].textContent = text
-        if(value != null) div.childNodes[pos].value = value
+    var child = div.childNodes[pos]
+    if (child) { //if it exists already just change the contents
+        child.textContent = text
+        if (value != null) child.value = value
     } else {
         var opt = document.createElement('option')
         opt.textContent = text
@@ -219,12 +222,13 @@ async function displayTracks(tracks) {
     var tracksDiv = document.getElementById("tracks")
     //add tracks
     for (let j = 0; j < tracks.length; j++) {
-        addDropDownChild(tracksDiv, tracks[j].name, j, tracks[j].external_urls.spotify)
+        addDropDownChild(tracksDiv, tracks[j].name, j, tracks[j].id)
     }
     //remove extraneous nodes
     removeDropDownChildren(tracksDiv, tracks.length, tracksDiv.childNodes.length)
     //select the searched track if it finds a match
     searchTracks(tracks, songDivVal)
+    
 }
 
 async function searchTracks(tracks, song) {
@@ -240,6 +244,39 @@ async function searchTracks(tracks, song) {
             tracksDiv.selectedIndex = 0
             errorDiv.textContent = `${song} not found in album!`
         }
+    }
+    createTrackEmbed(tracksDiv.options[tracksDiv.selectedIndex].value)
+}
+
+function createTrackEmbed(value) {
+    var embedDiv = document.getElementById("spotify-embed-track")
+    createEmbed("track", value, embedDiv)
+}
+
+/* Create a spotify embed
+ * type: "album": creates an embed of the album or "track": creates an embed of the track
+ * id: the spotify id of the track or album
+ * embedDiv: the div to place the embed in (assuming an iframe there exists)
+ */
+async function createEmbed(type, id, embedDiv) {
+    createBaseEmbed(`https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`, embedDiv)
+}
+
+async function createBaseEmbed(src, embedDiv) {
+    var frame = embedDiv.firstElementChild
+    if (frame) { //if it exists already just change the contents
+        var newPlayer = frame.cloneNode(false)
+        newPlayer.src = src
+        embedDiv.replaceChild(newPlayer, frame)
+    } else { //this shouldnt be called but this is just in case the frame doesn't exist already
+        var player = document.createElement('iframe')
+        player.src = src
+        if (type == "album") player.style = "border-radius:12px; width:350px; height:380px"
+        else player.style = "border-radius:12px; width:350px; height:80px"
+        player.frameBorder = "0"
+        player.allowfullscreen = ""
+        player.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        embedDiv.appendChild(player)
     }
 }
 
@@ -260,26 +297,40 @@ function playAlbum() {
 }
 
 function playTrack() {
-    var dataUrl = document.getElementById("tracks").value
+    var dataUrl = "https://open.spotify.com/track/" + document.getElementById("tracks").value
     if (dataUrl) {
         window.open(dataUrl, "_blank")
     }
 }
 
-/*function removeAlbum() {
-    //$("#player").hide()
-    document.getElementById("imageDiv").innerHTML = null
+function removeAlbum() {
+    createBaseEmbed("", document.getElementById("spotify-embed-album"))
+    createBaseEmbed("", document.getElementById("spotify-embed-track"))
+
+    previousSearch[0] = null
+    previousSearch[1] = null
+
+    $("#album_image").attr({
+        "src": "",
+        "alt": ""
+    })
 
     var albumNameDiv = document.getElementById("album_name")
     albumNameDiv.textContent = ""
-    albumNameDiv.dataset.uri = ""
+    //albumNameDiv.dataset.uri = ""
     albumNameDiv.dataset.url = ""
-
-    document.getElementById("artist").textContent = ""
-    document.getElementById("artist_select").innerHTML = null
     document.getElementById("release_date").textContent = ""
-    document.getElementById("tracks").innerHTML = null
-}*/
+    document.getElementById("artist").textContent = ""
+    
+    var artistSelectDiv = document.getElementById("artist_select")
+    while (artistSelectDiv.hasChildNodes()) {
+        artistSelectDiv.removeChild(artistSelectDiv.lastElementChild);
+    }
+    var tracksDiv = document.getElementById("tracks")
+    while (tracksDiv.hasChildNodes()) {
+        tracksDiv.removeChild(tracksDiv.lastElementChild);
+    }
+}
 
 async function getToken() {
     var access = getCookie('spotifyAccessToken')
