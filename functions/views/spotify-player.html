@@ -3,10 +3,17 @@
 <head>
     <title>VinylVision</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        //if googleapi CDN is down this is here just in case
+        if (typeof jQuery == 'undefined') {
+            document.write(unescape("%3Cscript src='./js/jquery-3.6.0.min.js' type='text/javascript'%3E%3C/script%3E"));
+        }
+    </script>
     <script type="text/javascript" src="./js/player.js"></script>
 </head>
 
 <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <h1>
         VinylVision Spotify Album Player
     </h1>
@@ -53,7 +60,7 @@
     <div id="spotify-embed-album">
         <iframe id="miniplayer" style="border-radius:12px; width:350px; height:380px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
-    
+
     <div id="logout">
         <a href="/spotify/logout">Back to Home Page</a>
     </div>
