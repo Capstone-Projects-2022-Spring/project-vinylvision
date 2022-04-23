@@ -116,10 +116,11 @@ app.get('/spotify/callback', function (req, res) {
                 }
                 
             } else { //response failure
-                res.redirect('/#' +
+                //this fucking adds it for no reason im commenting it out I don't care
+                /*res.redirect('/#' +
                     querystring.stringify({
                         error: 'invalid_token'
-                    })); //put invalid_token in url
+                    })); //put invalid_token in url*/
             }
         });
     }
