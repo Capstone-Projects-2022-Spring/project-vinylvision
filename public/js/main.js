@@ -15,6 +15,35 @@
 
 var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + window.apiKey;
 
+const censor = [
+  'album',
+  'artwork',
+  'cover',
+  'vinyl',
+  '[vinyl]',
+  'usa',
+  'import',
+  'lp',
+  '[lp]',
+  'cd',
+  '[cd]',
+  '(album)',
+  'poster',
+  't shirt',
+  't-shirt',
+  'soundtrack',
+  'mfsl',
+  'review',
+  '2015',
+  '2016',
+  '2017',
+  '2018',
+  '2019',
+  '2020',
+  '2021',
+  '2022'
+]
+
 $(function () {
   $('#fileform').on('submit', uploadFiles);
 });
@@ -62,7 +91,7 @@ function sendFileToCloudVision(content) {
   };
 
     //set spotify login div to null (to remove previous one)
-    document.getElementById('login').innerHTML = null
+  document.getElementById('login').innerHTML = null
   $('#results').text('Loading...');
   $.post({
     url: CV_URL,
@@ -77,17 +106,31 @@ function sendFileToCloudVision(content) {
  * Displays the results.
  */
 function displayJSON(data) {
-  if (!data) {
-    
+  var data2;
+  var contents;
+  var label;
+
+  if (!data) { //if no response print error message to the screen
+    data2 = "Sorry! No guess from Google Vision - Please try again!"
+    contents = JSON.stringify(data2, null, 5);
   }
-    var label = data.responses[0].webDetection.bestGuessLabels[0].label
-    var data2 = ('Your album cover is: \t' + label);
-  //console.log(data2);
-  var contents = JSON.stringify(data, null, 5);
+
+  else{ 
+    var visionGuessString = data.responses[0].webDetection.bestGuessLabels[0].label; //
+    var visionGuessArray = visionGuessString.split(" ");
+    console.log(visionGuessArray)
+    label = visionGuessArray.filter(x => !censor.includes(x)) //remove words in censor array from visionGuessArray
+    console.log(label); 
+    label = label.join(' '); //store cleaned vision guess array as a string with words separated by space - guess can now be searched with Spotify
+    data2 = ('Your album cover is: ' + label);
+    console.log(data2);
+    contents = JSON.stringify(data, null, 5); //do we need this
+  }
+
   $('#results').text(data2);
-  var evt = new Event('results-displayed');
+  var evt = new Event('results-displayed'); //do we need this stuff either
   evt.results = contents;
   document.dispatchEvent(evt);
     //add spotify login div with the label from google vision as a parameter in url
-    document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${label}' type='button'>Search with Spotify</a>`
+  document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${label}' type='button'>Search with Spotify</a>`
 }

@@ -8,5 +8,10 @@ If a user inputs an image containing album artwork, VinylVision will send it to 
 
 The data flow is similar if a user inputs audio. VinylVision will send the audio data to the AudD Music Recognition API. This API will analyze the song in the audio provided by the user, and respond to VinylVision details such as song title, artist name, album name, etc. At this point, the flow of data is the same as when an image is used as input. VinylVision sends the newly obtained details to the Spotify or Apple Music API, which will respond with the mini player and album recommendations. 
 
+
+[VinylVision Software Testing.xlsx](https://github.com/Capstone-Projects-2022-Spring/project-vinylvision/files/8468370/VinylVision.Software.Testing.xlsx)
+
+
+
 ### Team Members
 Anthony Guerrelli, John Crane, Robert Morsa, Mikhail Sajed, Andrew Pari
