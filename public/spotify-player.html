@@ -1,5 +1,17 @@
 <!doctype html>
-<html>
+<html lang="en">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="./css/index.css">
+<meta name="theme-color" content="#000000" />
+<title>VinylVision</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript" src="./js/key.js"></script>
+<script type="text/javascript" src="./js/main.js"></script>
+<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <head>
     <title>VinylVision</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -7,20 +19,20 @@
 </head>
 
 <body>
-    <h1>
-        VinylVision Spotify Album Player
-    </h1>
+    <a href="./index.html">
+        <img src="./logo.jpg" alt="logo" class="center"/>
+    </a>
 
-    <div id="search">
+    <div id="search" class="centerText">
         <label for="search_tags">Search:</label>
         <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
-        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
+        <input type="button" class="buttonSmall" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
         <div id="search_error">
             <br>
         </div>
     </div>
     <br>
-    <div id="player">
+    <div id="player" class="centerText">
 
         <label for="artist" id="artist_text">Artist:</label>
         <input name="artist" id="artist" readonly style="width:400px"><br><br>
@@ -28,16 +40,16 @@
         <label for="album_name" data-uri="" data-url="">Album:</label>
         <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
         <div id="imageDiv"></div><br>
-        <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
+        <input type="button" class="buttonSmall" onclick="playAlbum()" value="Open Album" /><br><br>
 
         <label for="tracks">Tracks:</label>
         <select name="tracks" id="tracks"></select><br><br>
-        <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
-        <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
-        <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
+        <input type="button" class="buttonSmall" onclick="playTrack()" value="Open Track" /><br><br>
+        <input type="button" class="buttonSmall" onclick="nextSearchResult(-1)" value="Previous Result" />
+        <input type="button" class="buttonSmall" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
         <label for="tracks">Artists:</label>
         <select name="artist_select" id="artist_select"></select><br><br>
-        <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
+        <input type="button" class="buttonSmall" onclick="searchArtistAlbums()" value="Search Artist" />
     </div>
 
     <div id="spotify-embed">

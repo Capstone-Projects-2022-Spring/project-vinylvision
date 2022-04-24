@@ -91,7 +91,7 @@ function sendFileToCloudVision(content) {
   };
 
     //set spotify login div to null (to remove previous one)
-  document.getElementById('login').innerHTML = null
+    // document.getElementById('login').innerHTML = null
   $('#results').text('Loading...');
   $.post({
     url: CV_URL,
@@ -115,12 +115,12 @@ function displayJSON(data) {
     contents = JSON.stringify(data2, null, 5);
   }
 
-  else{ 
+  else{
     var visionGuessString = data.responses[0].webDetection.bestGuessLabels[0].label; //
     var visionGuessArray = visionGuessString.split(" ");
     console.log(visionGuessArray)
     label = visionGuessArray.filter(x => !censor.includes(x)) //remove words in censor array from visionGuessArray
-    console.log(label); 
+    console.log(label);
     label = label.join(' '); //store cleaned vision guess array as a string with words separated by space - guess can now be searched with Spotify
     data2 = ('Your album cover is: ' + label);
     console.log(data2);
