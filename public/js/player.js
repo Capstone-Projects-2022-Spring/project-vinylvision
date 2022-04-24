@@ -93,7 +93,11 @@ function nextSearchResult(j) {
 function displayAlbum(album) {
     //console.log(album)
     //console.log(album.name)
+    $("#miniplayer").attr(
+        "src", `https://open.spotify.com/embed/album/${album.id}?utm_source=generator&theme=0`
+    );
     document.getElementById("imageDiv").innerHTML = `<img src=${album.images[1].url} alt='${album.name} Album Cover' width='200px' height='200px'>`
+
 
     //add album name
     var albumNameDiv = document.getElementById("album_name")
