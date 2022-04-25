@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+    <title>VinylVision</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/player.js"></script>
+</head>
+
+<body>
+    <h1>
+        VinylVision Spotify Album Player
+    </h1>
+
+    <div id="search">
+        <label for="search_tags">Search:</label>
+        <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
+        <div id="search_error">
+            <br>
+        </div>
+    </div>
+    <br>
+    <div id="player">
+
+        <label for="artist" id="artist_text">Artist:</label>
+        <input name="artist" id="artist" readonly style="width:400px"><br><br>
+
+        <label for="album_name" data-uri="" data-url="">Album:</label>
+        <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
+        <div id="imageDiv"></div><br>
+        <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
+
+        <label for="tracks">Tracks:</label>
+        <select name="tracks" id="tracks"></select><br><br>
+        <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
+        <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
+        <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
+        <label for="tracks">Artists:</label>
+        <select name="artist_select" id="artist_select"></select><br><br>
+        <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
+    </div>
+
+    <div id="spotify-embed">
+        <iframe id="miniplayer" style="border-radius:12px" width="50%" height="380" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    </div>
+
+    <br>
+    <div id="logout">
+        <a href="/spotify/logout">Back to Home Page</a>
+    </div>
+
+    <script>
+        //check if there's a guess in the parameters and autofill in the fields
+        var guess = getHashParams().guess
+        if (guess != undefined) {
+            document.getElementById('search_tags').value = guess
+            searchAlbums(guess)
+        }
+        window.addEventListener('hashchange', function () {
+            //window.history.pushState({}, null, myOldUrl);
+            var guess = getHashParams().guess
+            if (guess != undefined) {
+                document.getElementById('search_tags').value = guess
+                searchAlbums(guess)
+            }
+        });
+
+        //add event listener to search bar so that pressing enter searches it
+        // Get the input field
+        var input = document.getElementById("search_tags");
+        // Execute a function when the user releases a key on the keyboard
+        input.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                document.getElementById("search_button").click();
+            }
+        });
+
+            //impossible to use without premium
+        /*function play(accessToken) {
+            let trackIndex = document.getElementById("tracks").value;
+            let albumUri = document.getElementById("album_name").getAttribute("data-uri");
+            console.log(albumUri)
+            $.ajax({
+                method: "PUT",
+                url: 'https://api.spotify.com/v1/me/player/play',
+                data: {
+                    context_uri: albumUri,
+                    offset: {
+                        position: trackIndex
+                    },
+                    position_ms: 0
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                success: function (response) {
+                    console.log(response)
+                }
+            });
+        }*/
+    </script>
+</body>
+</html>
