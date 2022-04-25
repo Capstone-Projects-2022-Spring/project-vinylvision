@@ -45,6 +45,7 @@ const censor = [
   'cover',
   'vinyl',
   '[vinyl]',
+  'vinyle',
   'usa',
   'import',
   'lp',
@@ -65,7 +66,12 @@ const censor = [
   '2019',
   '2020',
   '2021',
-  '2022'
+  '2022',
+  'itunes',
+  'spotify',
+  'last fm',
+  'amazon',
+  'original'
 ]
 
 $(function () {
