@@ -77,9 +77,9 @@ async function processFile(event) {
         }
     }).then(response => response.json()).then(data => {
         if (data.failure == "true"){
-            document.getElementById('login').textContent = "try web detection"
-        }else {
-            document.getElementById('login').textContent = data.label + " " + data.threshold + " " + data.confidence
+            document.getElementById('login').textContent = "Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results."
+        } else {
+            document.getElementById('login').textContent = "Your predicted album cover is: " + data.label + " with a confidence of " + data.confidence + "."
         }
      });
     

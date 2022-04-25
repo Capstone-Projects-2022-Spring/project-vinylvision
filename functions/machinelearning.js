@@ -65,7 +65,7 @@ async function predictImageClassification(file, callback) {
     const endpoint = `projects/${project}/locations/${location}/endpoints/${endpointId}`;
 
     const parametersObj = new params.ImageClassificationPredictionParams({
-        confidenceThreshold: 0.5,
+        confidenceThreshold: 0.7,
         maxPredictions: 5,
     });
     const parameters = parametersObj.toValue();
@@ -107,7 +107,7 @@ async function predictImageClassification(file, callback) {
                 console.log("Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results.");
             }
             //console.log(`\tIDs: ${predictionResultObj.ids[i]}\n\n`);
-            callback(slabel, parametersObj.confidenceThreshold, predictionResultObj.confidences[i], "false")
+            callback(slabel, parametersObj.confidenceThreshold,predictionResultObj.confidences[i], "false")
         }
         if (failure == "true") {
             callback("", "", "", failure)
