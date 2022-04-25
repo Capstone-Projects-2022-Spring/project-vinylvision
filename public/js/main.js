@@ -11,6 +11,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const compressImage = (imageFile, quality) => {
+    return new Promise((resolve, reject) => {
+        const $canvas = document.createElement("canvas");
+        const image = new Image();
+        image.onload = () => {
+            $canvas.width = image.width;
+            $canvas.height = image.height;
+            $canvas.getContext("2d").drawImage(image, 0, 0);
+            $canvas.toBlob(
+                (blob) => {
+                    if (blob === null) {
+                        return reject(blob);
+                    } else {
+                        resolve(blob);
+                    }
+                },
+                "image/jpeg",
+                quality / 100
+            );
+        };
+        image.src = URL.createObjectURL(imageFile);
+    });
+};
+
 'use strict';
 
 var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + window.apiKey;
@@ -23,22 +47,43 @@ $(function () {
  * 'submit' event handler - reads the image bytes and sends it to the Cloud
  * Vision API.
  */
-function uploadFiles(event) {
+async function uploadFiles(event) {
   event.preventDefault(); // Prevent the default form post
 
   // Grab the file and asynchronously convert to base64.
-  var file = $('#fileform [name=fileField]')[0].files[0];
+    var file = $('#fileform [name=fileField]')[0].files[0];
+    //console.log(file)
+    const blob = await compressImage(file, 10); //compress image by 90%
+    //console.log(blob)
   var reader = new FileReader();
   reader.onloadend = processFile;
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(blob);
 }
 
 /**
  * Event handler for a file's data url - extract the image data and pass it off.
  */
-function processFile(event) {
-  var content = event.target.result;
-  sendFileToCloudVision(content.replace('data:image/jpeg;base64,', ''));
+async function processFile(event) {
+    //console.log(event)
+    var content = event.target.result;
+    var image = content.replace('data:image/jpeg;base64,', '')
+    fetch('/machinelearning', {
+        method: 'POST',
+        body: JSON.stringify({
+            file: image
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json()).then(data => {
+        if (data.failure == "true"){
+            document.getElementById('login').textContent = "try web detection"
+        }else {
+            document.getElementById('login').textContent = data.label + " " + data.threshold + " " + data.confidence
+        }
+     });
+    
+  //sendFileToCloudVision(image);
 }
 
 /**

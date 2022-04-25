@@ -138,8 +138,21 @@ app.get('/spotify/refresh_token', function (req, res) {
     });
 });
 
-app.get('', function (req, res) {
-    main();
+app.post('/machinelearning', function (req, res) {
+    console.log("machinelearning")
+    var file = req.body.file
+    //console.log(file)
+    //var file = JSON.parse(req.body).file
+    machine.main(file, function (label, threshold, confidence, failure) {
+        console.log("second " + label)
+        res.send({
+            'label': label,
+            'threshold': threshold,
+            'confidence': confidence,
+            'failure': failure
+        });
+        console.log("sent")
+    })
 })
 
 //console.log('Listening on ' + serverPORT);
