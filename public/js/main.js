@@ -88,7 +88,7 @@ async function uploadFiles(event) {
   // Grab the file and asynchronously convert to base64.
     var file = $('#fileform [name=fileField]')[0].files[0];
     //console.log(file)
-    const blob = await compressImage(file, 10); //compress image by 90%
+    const blob = await compressImage(file, 20); //compress image by 90%
     //console.log(blob)
   var reader = new FileReader();
   reader.onloadend = processFile;
@@ -99,9 +99,13 @@ async function uploadFiles(event) {
  * Event handler for a file's data url - extract the image data and pass it off.
  */
 async function processFile(event) {
+    //hide login
+    $("#login").hide()
+    document.getElementById('album-details').textContent = ""
+    $('#results').text("")
     //console.log(event)
     var type = $('#fileform [name=type]').val();
-    console.log(type);
+    //console.log(type);
     var content = event.target.result;
     var image = content.replace('data:image/jpeg;base64,', '')
     if (type == "MACHINE_DETECTION") {
@@ -152,8 +156,6 @@ function sendFileToCloudVision(type, content) {
     }]
   };
 
-    //hide login
-    $("#login").hide()
   $('#results').text('Loading...');
   $.post({
     url: CV_URL,
@@ -174,12 +176,12 @@ function displayJSON(data) {
 
   var visionGuessString = data.responses[0].webDetection.bestGuessLabels[0].label; //
   var visionGuessArray = visionGuessString.split(" ");
-  console.log(visionGuessArray)
+  //console.log(visionGuessArray)
   label = visionGuessArray.filter(x => !censor.includes(x)) //remove words in censor array from visionGuessArray
-  console.log(label); 
+  //console.log(label); 
   label = label.join(' '); //store cleaned vision guess array as a string with words separated by space - guess can now be searched with Spotify
   data2 = ('Your album cover is: ' + label);
-  console.log(data2);
+  //console.log(data2);
   contents = JSON.stringify(data, null, 5); //do we need this
 
   $('#results').text(data2);
