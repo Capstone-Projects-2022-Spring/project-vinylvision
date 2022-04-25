@@ -123,7 +123,7 @@ async function processFile(event) {
           } else {
               var album_title = data.label
               album_title = album_title.replaceAll('_',' ');
-              document.getElementById('album-details').textContent = "Your predicted album cover is: " + album_title + " with a confidence of " + data.confidence + "."
+              document.getElementById('album-details').textContent = "Your predicted album cover is: " + album_title + " with a confidence of " + (data.confidence * 100) + "%."
 
                 //add spotify login div with the label from google vision as a parameter in url
               $("#login").attr(
