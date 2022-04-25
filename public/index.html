@@ -7,6 +7,12 @@
     <meta name="theme-color" content="#000000" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script>
+        //if googleapi CDN is down this is here just in case
+        if (typeof jQuery == 'undefined') {
+            document.write(unescape("%3Cscript src='./js/jquery-3.6.0.min.js' type='text/javascript'%3E%3C/script%3E"));
+        }
+    </script>
     <script type="text/javascript" src="./js/key.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
 
@@ -25,7 +31,7 @@
                 <option value="MACHINE_DETECTION">Machine Detection</option>
             </select><br />
             <input type="file" name="fileField"><br /><br />
-            <input type="submit" name="submit" value="Submit">
+            <input type="submit" name="submit" value="Upload Album Image">
         </form>
 
         <code style="white-space:pre" id="results"></code>
@@ -37,6 +43,8 @@
 
     <div id="login">
 
+    <div>
+        <a id="login" style="display: none;">Search with Spotify</a>
     </div>
 
     <div>
@@ -46,7 +54,7 @@
                 <input type="file" accept=".mp3" id="audio-input" class="form-control form-control-sm" />
             </div>
             <div class="col">
-                <button class="btn btn-sm btn-primary" onclick="submit()">Upload</button>
+                <button class="btn btn-sm btn-primary" onclick="submit()">Upload Audio File</button>
             </div>
         </div>
 
@@ -54,12 +62,14 @@
         <h5 class="mt-3">Result</h5>
         <div id="result"></div><br />
 
-        <div id="login2">
-
-        </div><br />
+        <div>
+            <a id="login2" style="display: none;">Search with Spotify</a>
+        </div>
+        <br>
     </div>
 
     <script>
+        var login = $("#login2")
         const input = document.querySelector("#audio-input");
         var file = null;
 
@@ -69,9 +79,9 @@
 
         function submit() {
             if (file) {
-                document.getElementById('login2').innerHTML = null
+                login.hide()
                 var postData = new FormData();
-                postData.append('api_token', 'f515f56c29f1626c4238ac352fa98b18');
+                postData.append('api_token', 'd382707b190814f3abd7f249a2227888');
                 postData.append('file', file);
                 postData.append('return', 'spotify');
 
@@ -85,7 +95,6 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        //console.log(response);
 
                         if ((response.result == null) || (response.result.title == 'error')) {
                             result.innerHTML = `<table class="table">  <tr> <td> audio file upload failed </td> </tr> </table>`;
@@ -115,8 +124,14 @@
                                                 <td class="text-primary">${response.result.release_date}</td>
                                             </tr>
                                         </table>`;
-                            var search = response.result.title + " " + response.result.artist
-                            document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${search}' type='button'>Search with Spotify</a>`
+                            var search
+                            if (response.result.album != null)
+                                search = response.result.album + " " + response.result.artist
+                            else
+                                search = response.result.title + " " + response.result.artist
+                            login.attr(
+                                "href", `spotify/login/:search?album=${encodeURIComponent(search)}&song=${encodeURIComponent(response.result.title)}`
+                            ).show()
                         }
                     }
                 });
@@ -128,7 +143,8 @@
     <div style="max-width: 28em;">
 
         <select id="encodingTypeSelect">
-            <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
+	    <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
+            <option value="wav">Waveform Audio (.wav)</option>
         </select>
         <div id="controls">
             <button id="recordButton">Record</button>
@@ -169,7 +185,7 @@
             var constraints = { audio: true, video: false }
 
             navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-                __log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
+
 
                 audioContext = new AudioContext();
 
@@ -190,13 +206,7 @@
                 recorder = new WebAudioRecorder(inputMic, {
                     workerDir: "js/", // must end with slash
                     encoding: encodingType,
-                    numChannels: 2,
-                    onEncoderLoading: function (recorder, encoding) {
-                        __log("Loading " + encoding + " encoder...");
-                    },
-                    onEncoderLoaded: function (recorder, encoding) {
-                        __log(encoding + " encoder loaded");
-                    }
+                    numChannels: 2
                 });
 
                 recorder.onComplete = function (recorder, blob) {
@@ -230,7 +240,6 @@
         }
 
         function stopRecording() {
-            console.log("stopRecording() called");
 
             //stop microphone access
             gumStream.getAudioTracks()[0].stop();
