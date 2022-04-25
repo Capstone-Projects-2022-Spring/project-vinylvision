@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="./css/index.css">
+<meta name="theme-color" content="#000000" />
+<title>VinylVision</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript" src="./js/key.js"></script>
+<script type="text/javascript" src="./js/main.js"></script>
+<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<head>
+    <title>VinylVision</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        //if googleapi CDN is down this is here just in case
+        if (typeof jQuery == 'undefined') {
+            document.write(unescape("%3Cscript src='./js/jquery-3.6.0.min.js' type='text/javascript'%3E%3C/script%3E"));
+        }
+    </script>
+    <script type="text/javascript" src="./js/player.js"></script>
+</head>
+
+<body>
+    <a href="./index.html">
+        <img src="./logo.jpg" alt="logo" class="center"/>
+    </a>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <h1>
+        VinylVision Spotify Album Player
+    </h1>
+
+    <div id="search" class="centerText">
+        <label for="search_tags">Search:</label>
+        <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+        <input type="button" class="buttonSmall" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
+        <div id="search_error">
+            <br>
+        </div>
+    <div id="search">
+        <label>Album:</label>
+        <input type="text" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+        <label>Song:</label>
+        <input type="text" id="search_tags2" placeholder="Song Guess" style="width:311.5px"><br><br>
+        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" /><br>
+
+        <font color='red' id="error_text" style="white-space: pre-line "><br></font>
+    </div>
+    <br>
+    <div id="player" class="centerText">
+
+        <a id="artist_text">Artist:</a>
+        <a id="artist" style="width:500px"></a><br><br>
+
+        <a>Album:</a>
+        <a id="album_name" style="width:500px"></a><br><br>
+
+        <a>Released:</a>
+        <a id="release_date" style="width:500px"></a><br><br>
+
+        <img id="album_image" style="width:200px; height:200px"><br>
+
+        <label for="album_name" data-uri="" data-url="">Album:</label>
+        <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
+        <div id="imageDiv"></div><br>
+        <input type="button" class="buttonSmall" onclick="playAlbum()" value="Open Album" /><br><br>
+        <div id="spotify-embed-track">
+            <iframe id="miniplayer" style="border-radius:12px; width:350px; height:80px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
+
+        <label for="tracks">Tracks:</label>
+        <select name="tracks" id="tracks"></select><br><br>
+        <input type="button" class="buttonSmall" onclick="playTrack()" value="Open Track" /><br><br>
+        <input type="button" class="buttonSmall" onclick="nextSearchResult(-1)" value="Previous Result" />
+        <input type="button" class="buttonSmall" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
+        <label for="tracks">Artists:</label>
+        <a>Tracks:</a>
+        <select id="tracks" onchange="createTrackEmbed(this.options[this.selectedIndex].value)"></select><br><br>
+        <input type="button" onclick="openTrack()" value="Open Track" />
+        <input type="button" onclick="openAlbum()" value="Open Album" /><br><br>
+
+        <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
+        <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
+        <a>Artists:</a>
+        <select name="artist_select" id="artist_select"></select><br><br>
+        <input type="button" class="buttonSmall" onclick="searchArtistAlbums()" value="Search Artist" />
+        <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
+    </div><br>
+
+    <div id="spotify-embed-album">
+        <iframe id="miniplayer" style="border-radius:12px; width:350px; height:380px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    </div>
+
+    <div id="logout">
+        <a href="/spotify/logout">Back to Home Page</a>
+    </div>
+
+    <script>
+        //check if there's a guess in the parameters and autofill in the fields
+        var albumSearchDiv = document.getElementById('search_tags')
+        var songSearchDiv = document.getElementById('search_tags2')
+        //search album from hash
+        searchAlbumFromHash()
+
+        //add event listener to check if there's a change in the hash
+        window.addEventListener('hashchange', function () {
+            //window.history.pushState({}, null, myOldUrl); //what the hell is this
+            searchAlbumFromHash()
+        });
+
+        var searchButton = document.getElementById("search_button")
+        //add event listener to search bar for the enter key (13)
+        searchEnterListener = function (event) {
+            if (event.which === 13) {
+                //cancel default action and press the button
+                event.preventDefault()
+                searchButton.click()
+            }
+        }
+
+        //add event listeners to Album Search bar and Song Search bar
+        albumSearchDiv.addEventListener("keypress", searchEnterListener);
+        songSearchDiv.addEventListener("keypress", searchEnterListener);
+
+        /* Call searchAlbums() with the album retrieved from hash
+         * Sets the album and song from the URL within the search bar
+         */
+        function searchAlbumFromHash() {
+            var hash = getHashParams()
+            var album = hash.album
+            var song = hash.song
+            if (album != undefined) { //if album exists
+                albumSearchDiv.value = album
+                if (song != undefined) //if song exists, set song value
+                    songSearchDiv.value = song
+                else
+                    songSearchDiv.value = null
+                searchAlbums(album)
+            } else { //remove the album if no album exists
+                albumSearchDiv.value = null
+                removeAlbum()
+            }
+        }
+    </script>
+</body>
+</html>
