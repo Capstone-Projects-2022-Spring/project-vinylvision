@@ -1,7 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\public"
+    "\\functions",
+    "\\functions\\views",
+    "\\public",
+    "\\public\\css",
+    "\\public\\js"
   ],
+  "SelectedNode": "\\public\\js\\main.js",
   "PreviewInSolutionExplorer": false
 }
