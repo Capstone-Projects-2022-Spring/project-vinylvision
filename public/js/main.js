@@ -65,34 +65,42 @@ async function uploadFiles(event) {
  */
 async function processFile(event) {
     //console.log(event)
+    var type = $('#fileform [name=type]').val();
+    console.log(type);
     var content = event.target.result;
     var image = content.replace('data:image/jpeg;base64,', '')
-    fetch('/machinelearning', {
-        method: 'POST',
-        body: JSON.stringify({
-            file: image
-        }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => response.json()).then(data => {
-        if (data.failure == "true"){
-            document.getElementById('login').textContent = "Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results."
-        } else {
-            document.getElementById('login').textContent = "Your predicted album cover is: " + data.label + " with a confidence of " + data.confidence + "."
-        }
-     });
-    
-  //sendFileToCloudVision(image);
+    if (type == "MACHINE_DETECTION") {
+      fetch('/machinelearning', {
+          method: 'POST',
+          body: JSON.stringify({
+              file: image
+          }),
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      }).then(response => response.json()).then(data => {
+          if (data.failure == "true"){
+              document.getElementById('login').textContent = "Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results."
+          } else {
+              document.getElementById('login').textContent = "Your predicted album cover is: " + data.label + " with a confidence of " + data.confidence + "."
+              var jawn = data.label
+              jawn = jawn.replaceAll('_',' ');
+              console.log(jawn)
+              document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${jawn}' type='button'>Search with Spotify</a>`
+          }
+      });
+    }
+    else if (type == "WEB_DETECTION") {
+      sendFileToCloudVision(type, image);
+      displayJSON()
+    }
 }
 
 /**
  * Sends the given file contents to the Cloud Vision API and outputs the
  * results.
  */
-function sendFileToCloudVision(content) {
-  var type = $('#fileform [name=type]').val();
-
+function sendFileToCloudVision(type, content) {
   // Strip out the file prefix when you convert to json.
   var request = {
     requests: [{
