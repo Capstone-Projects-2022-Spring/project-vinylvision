@@ -115,7 +115,10 @@ async function processFile(event) {
               album_title = album_title.replaceAll('_',' ');
               document.getElementById('album-details').textContent = "Your predicted album cover is: " + album_title + " with a confidence of " + data.confidence + "."
 
-              document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${album_title}' type='button'>Search with Spotify</a>`
+                //add spotify login div with the label from google vision as a parameter in url
+              $("#login").attr(
+                "href", `spotify/login/:search?album=${encodeURIComponent(album_title)}`
+              ).show()
           }
       });
     }
@@ -163,22 +166,15 @@ function displayJSON(data) {
   var contents;
   var label;
 
-  if (!data) { //if no response print error message to the screen
-    data2 = "Sorry! No guess from Google Vision - Please try again!"
-    contents = JSON.stringify(data2, null, 5);
-  }
-
-  else{ 
-    var visionGuessString = data.responses[0].webDetection.bestGuessLabels[0].label; //
-    var visionGuessArray = visionGuessString.split(" ");
-    console.log(visionGuessArray)
-    label = visionGuessArray.filter(x => !censor.includes(x)) //remove words in censor array from visionGuessArray
-    console.log(label); 
-    label = label.join(' '); //store cleaned vision guess array as a string with words separated by space - guess can now be searched with Spotify
-    data2 = ('Your album cover is: ' + label);
-    console.log(data2);
-    contents = JSON.stringify(data, null, 5); //do we need this
-  }
+  var visionGuessString = data.responses[0].webDetection.bestGuessLabels[0].label; //
+  var visionGuessArray = visionGuessString.split(" ");
+  console.log(visionGuessArray)
+  label = visionGuessArray.filter(x => !censor.includes(x)) //remove words in censor array from visionGuessArray
+  console.log(label); 
+  label = label.join(' '); //store cleaned vision guess array as a string with words separated by space - guess can now be searched with Spotify
+  data2 = ('Your album cover is: ' + label);
+  console.log(data2);
+  contents = JSON.stringify(data, null, 5); //do we need this
 
   $('#results').text(data2);
   var evt = new Event('results-displayed'); //do we need this stuff either
