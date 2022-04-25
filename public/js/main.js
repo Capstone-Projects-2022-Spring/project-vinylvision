@@ -80,13 +80,13 @@ async function processFile(event) {
           }
       }).then(response => response.json()).then(data => {
           if (data.failure == "true"){
-              document.getElementById('login').textContent = "Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results."
+              document.getElementById('album-details').textContent = "Your submission could not be recognized with very high confidence. Try submitting again, or use web detection for a wider range of results."
           } else {
-              document.getElementById('login').textContent = "Your predicted album cover is: " + data.label + " with a confidence of " + data.confidence + "."
-              var jawn = data.label
-              jawn = jawn.replaceAll('_',' ');
-              console.log(jawn)
-              document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${jawn}' type='button'>Search with Spotify</a>`
+              var album_title = data.label
+              album_title = album_title.replaceAll('_',' ');
+              document.getElementById('album-details').textContent = "Your predicted album cover is: " + album_title + " with a confidence of " + data.confidence + "."
+
+              document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${album_title}' type='button'>Search with Spotify</a>`
           }
       });
     }
