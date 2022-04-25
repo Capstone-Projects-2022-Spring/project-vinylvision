@@ -3,114 +3,105 @@
 <head>
     <title>VinylVision</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script>
-        //if googleapi CDN is down this is here just in case
-        if (typeof jQuery == 'undefined') {
-            document.write(unescape("%3Cscript src='./js/jquery-3.6.0.min.js' type='text/javascript'%3E%3C/script%3E"));
-        }
-    </script>
     <script type="text/javascript" src="./js/player.js"></script>
 </head>
 
 <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
     <h1>
         VinylVision Spotify Album Player
     </h1>
 
     <div id="search">
-        <label>Album:</label>
-        <input type="text" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
-        <label>Song:</label>
-        <input type="text" id="search_tags2" placeholder="Song Guess" style="width:311.5px"><br><br>
-        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" /><br>
-
-        <font color='red' id="error_text" style="white-space: pre-line "><br></font>
+        <label for="search_tags">Search:</label>
+        <input type="text" name="search_tags" id="search_tags" placeholder="Album Guess" style="width:300px"><br><br>
+        <input type="button" id="search_button" onclick="searchAlbums(document.getElementById('search_tags').value)" value="Search" />
+        <div id="search_error">
+            <br>
+        </div>
     </div>
     <br>
     <div id="player">
 
-        <a id="artist_text">Artist:</a>
-        <a id="artist" style="width:500px"></a><br><br>
+        <label for="artist" id="artist_text">Artist:</label>
+        <input name="artist" id="artist" readonly style="width:400px"><br><br>
 
-        <a>Album:</a>
-        <a id="album_name" style="width:500px"></a><br><br>
+        <label for="album_name" data-uri="" data-url="">Album:</label>
+        <input name="album_name" id="album_name" readonly style="width:300px"><br><br>
+        <div id="imageDiv"></div><br>
+        <input type="button" onclick="playAlbum()" value="Open Album" /><br><br>
 
-        <a>Released:</a>
-        <a id="release_date" style="width:500px"></a><br><br>
-
-        <img id="album_image" style="width:200px; height:200px"><br>
-
-        <div id="spotify-embed-track">
-            <iframe id="miniplayer" style="border-radius:12px; width:350px; height:80px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-        </div>
-
-        <a>Tracks:</a>
-        <select id="tracks" onchange="createTrackEmbed(this.options[this.selectedIndex].value)"></select><br><br>
-        <input type="button" onclick="openTrack()" value="Open Track" />
-        <input type="button" onclick="openAlbum()" value="Open Album" /><br><br>
-
+        <label for="tracks">Tracks:</label>
+        <select name="tracks" id="tracks"></select><br><br>
+        <input type="button" onclick="playTrack()" value="Open Track" /><br><br>
         <input type="button" onclick="nextSearchResult(-1)" value="Previous Result" />
         <input type="button" onclick="nextSearchResult(1)" value="Next Result" /><br><br>
-        <a>Artists:</a>
+        <label for="tracks">Artists:</label>
         <select name="artist_select" id="artist_select"></select><br><br>
         <input type="button" onclick="searchArtistAlbums()" value="Search Artist" />
-    </div><br>
-
-    <div id="spotify-embed-album">
-        <iframe id="miniplayer" style="border-radius:12px; width:350px; height:380px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
 
+    <div id="spotify-embed">
+        <iframe id="miniplayer" style="border-radius:12px" width="50%" height="380" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    </div>
+
+    <br>
     <div id="logout">
         <a href="/spotify/logout">Back to Home Page</a>
     </div>
 
     <script>
         //check if there's a guess in the parameters and autofill in the fields
-        var albumSearchDiv = document.getElementById('search_tags')
-        var songSearchDiv = document.getElementById('search_tags2')
-        //search album from hash
-        searchAlbumFromHash()
-
-        //add event listener to check if there's a change in the hash
+        var guess = getHashParams().guess
+        if (guess != undefined) {
+            document.getElementById('search_tags').value = guess
+            searchAlbums(guess)
+        }
         window.addEventListener('hashchange', function () {
-            //window.history.pushState({}, null, myOldUrl); //what the hell is this
-            searchAlbumFromHash()
+            //window.history.pushState({}, null, myOldUrl);
+            var guess = getHashParams().guess
+            if (guess != undefined) {
+                document.getElementById('search_tags').value = guess
+                searchAlbums(guess)
+            }
         });
 
-        var searchButton = document.getElementById("search_button")
-        //add event listener to search bar for the enter key (13)
-        searchEnterListener = function (event) {
-            if (event.which === 13) {
-                //cancel default action and press the button
-                event.preventDefault()
-                searchButton.click()
+        //add event listener to search bar so that pressing enter searches it
+        // Get the input field
+        var input = document.getElementById("search_tags");
+        // Execute a function when the user releases a key on the keyboard
+        input.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                document.getElementById("search_button").click();
             }
-        }
+        });
 
-        //add event listeners to Album Search bar and Song Search bar
-        albumSearchDiv.addEventListener("keypress", searchEnterListener);
-        songSearchDiv.addEventListener("keypress", searchEnterListener);
-
-        /* Call searchAlbums() with the album retrieved from hash
-         * Sets the album and song from the URL within the search bar
-         */
-        function searchAlbumFromHash() {
-            var hash = getHashParams()
-            var album = hash.album
-            var song = hash.song
-            if (album != undefined) { //if album exists
-                albumSearchDiv.value = album
-                if (song != undefined) //if song exists, set song value
-                    songSearchDiv.value = song
-                else
-                    songSearchDiv.value = null
-                searchAlbums(album)
-            } else { //remove the album if no album exists
-                albumSearchDiv.value = null
-                removeAlbum()
-            }
-        }
+            //impossible to use without premium
+        /*function play(accessToken) {
+            let trackIndex = document.getElementById("tracks").value;
+            let albumUri = document.getElementById("album_name").getAttribute("data-uri");
+            console.log(albumUri)
+            $.ajax({
+                method: "PUT",
+                url: 'https://api.spotify.com/v1/me/player/play',
+                data: {
+                    context_uri: albumUri,
+                    offset: {
+                        position: trackIndex
+                    },
+                    position_ms: 0
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                success: function (response) {
+                    console.log(response)
+                }
+            });
+        }*/
     </script>
 </body>
 </html>
