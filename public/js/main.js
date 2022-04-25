@@ -90,8 +90,8 @@ function sendFileToCloudVision(content) {
     }]
   };
 
-    //set spotify login div to null (to remove previous one)
-  document.getElementById('login').innerHTML = null
+    //hide login
+    $("#login").hide()
   $('#results').text('Loading...');
   $.post({
     url: CV_URL,
@@ -131,6 +131,8 @@ function displayJSON(data) {
   var evt = new Event('results-displayed'); //do we need this stuff either
   evt.results = contents;
   document.dispatchEvent(evt);
-    //add spotify login div with the label from google vision as a parameter in url
-  document.getElementById('login').innerHTML = `<a href='spotify/login/:search?guess=${label}' type='button'>Search with Spotify</a>`
+  //add spotify login div with the label from google vision as a parameter in url
+    $("#login").attr(
+        "href", `spotify/login/:search?album=${encodeURIComponent(label)}`
+    ).show()
 }
