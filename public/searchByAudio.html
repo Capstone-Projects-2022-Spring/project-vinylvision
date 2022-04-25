@@ -35,10 +35,11 @@
 
         <p class="centerHeader">Results:</p>
         <div id="result"></div><br />
-        <div id="login2"></div><br />
+        <div><a id="login2" style="display: none;">Search with Spotify</a></div><br />
     </div>
 
     <script>
+        var login = $("#login2")
         const input = document.querySelector("#audio-input");
         var file = null;
 
@@ -72,7 +73,7 @@
                         result.innerHTML =
                             `<table class="table" sty>
 				   	                <tr>
-					                     <td class="centerText">Song Title</td>
+					                    <td class="centerText">Song Title</td>
 					                    <td class="text-primary centerText">${response.result.title}</td>
 					                </tr>
 
@@ -93,8 +94,14 @@
                                         <td class="text-primary centerText">${response.result.release_date}</td>
                                     </tr>
                                 </table>`;
-                            var search = response.result.title + " " + response.result.artist
-                            document.getElementById('login2').innerHTML = `<a href='spotify/login/:search?guess=${search}' type='button'>Search with Spotify</a>`
+                            var search
+                            if (response.result.album != null)
+                                search = response.result.album + " " + response.result.artist
+                            else
+                                search = response.result.title + " " + response.result.artist
+                            login.attr(
+                                "href", `spotify/login/:search?album=${encodeURIComponent(search)}&song=${encodeURIComponent(response.result.title)}`
+                            ).show()
                         }
 
                     }
@@ -103,14 +110,15 @@
         }
     </script>
 
-    <div class="center" style="max-width: 28em;">
-        <p class="centerHeader">Record Audio</p>
+    <div style="max-width: 28em;">
+
         <select id="encodingTypeSelect">
             <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
+            <option value="wav">Waveform Audio (.wav)</option>
         </select>
         <div id="controls">
-            <button class="button" id="recordButton">Record</button>
-            <button class="button" id="stopButton" disabled>Stop</button>
+            <button id="recordButton">Record</button>
+            <button id="stopButton" disabled>Stop</button>
         </div>
         <div id="formats"></div>
         <pre>Log</pre>
@@ -125,21 +133,21 @@
     <script>
         URL = window.URL || window.webkitURL;
 
-        var gumStream; 						//stream from getUserMedia()
-        var recorder; 						//WebAudioRecorder object
-        var inputMic; 							//MediaStreamAudioSourceNode  we'll be recording
-        var encodingType; 					//holds selected encoding for resulting audio (file)
-        var encodeAfterRecord = true;       // when to encode
+        var gumStream;
+        var recorder;
+        var inputMic;
+        var encodingType;
+        var encodeAfterRecord = true;
 
-        // shim for AudioContext when it's not avb.
+
         var AudioContext = window.AudioContext || window.webkitAudioContext;
-        var audioContext; //new audio context to help us record
+        var audioContext;
 
         var encodingTypeSelect = document.getElementById("encodingTypeSelect");
         var recordButton = document.getElementById("recordButton");
         var stopButton = document.getElementById("stopButton");
 
-        //add events to those 2 buttons
+        //add events to buttons
         recordButton.addEventListener("click", startRecording);
         stopButton.addEventListener("click", stopRecording);
 
@@ -147,7 +155,7 @@
             var constraints = { audio: true, video: false }
 
             navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-                __log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
+
 
                 audioContext = new AudioContext();
 
@@ -168,13 +176,7 @@
                 recorder = new WebAudioRecorder(inputMic, {
                     workerDir: "js/", // must end with slash
                     encoding: encodingType,
-                    numChannels: 2,
-                    onEncoderLoading: function (recorder, encoding) {
-                        __log("Loading " + encoding + " encoder...");
-                    },
-                    onEncoderLoaded: function (recorder, encoding) {
-                        __log(encoding + " encoder loaded");
-                    }
+                    numChannels: 2
                 });
 
                 recorder.onComplete = function (recorder, blob) {
@@ -208,7 +210,6 @@
         }
 
         function stopRecording() {
-            console.log("stopRecording() called");
 
             //stop microphone access
             gumStream.getAudioTracks()[0].stop();
@@ -223,7 +224,7 @@
             __log('Recording stopped');
         }
 
-        function createDownloadLink(blob,encoding) {
+        function createDownloadLink(blob, encoding) {
 
             var url = URL.createObjectURL(blob);
             var au = document.createElement('audio');
@@ -236,7 +237,7 @@
 
             //link the a element to the blob
             link.href = url;
-            link.download = new Date().toISOString() + '.'+encoding;
+            link.download = new Date().toISOString() + '.' + encoding;
             link.innerHTML = link.download;
 
             //add the new audio and a elements to the li element
