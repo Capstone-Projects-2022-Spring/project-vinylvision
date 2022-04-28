@@ -9,8 +9,6 @@ require('dotenv').config(); //for loading from env file
 var projectUrl = process.env.PROJECT_URL;
 const spotify = require('./spotify.js');
 const machine = require('./machinelearning.js');
-
-
 const functions = require('firebase-functions'); //for firebase functions
 const { mainModule } = require('process');
 
@@ -32,8 +30,6 @@ var generateRandomString = function (length) {
 var albumVar = undefined;
 var songVar = undefined;
 
-//var stateKey = 'spotify_auth_state';
-
 var app = express();
 
 app.use(express.static(__dirname + '/public'))
@@ -52,13 +48,11 @@ var state
 app.get('/spotify/login', function (req, res) {
 
     state = generateRandomString(16);
-    //res.cookie(stateKey, state);
 
     // your application requests authorization
     res.redirect('https://accounts.spotify.com/authorize?' +
         spotify.getAuthQueryString(state));
 });
-
 
 /*send to spotify's site and check for has parameter in the format
  * search album:        /spotify/login/:search?album=someResponse
@@ -69,7 +63,6 @@ app.get('/spotify/login/:search', function (req, res) {
     songVar = req.query.song //store song to send to redirect
 
     state = generateRandomString(16);
-    //res.cookie(stateKey, state);
 
     // your application requests authorization
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -90,17 +83,13 @@ app.get('/spotify/callback', function (req, res) {
     // after checking the state parameter
 
     var code = req.query.code || null;
-    //var state = req.query.state || null;
-    //var storedState = req.cookies ? req.cookies[stateKey] : null;
 
-    // || state !== storedState
     if (state === null) { //state mismatch error
         res.redirect('/#' +
             querystring.stringify({
                 error: 'state_mismatch'
             })); //put in url state_mismatch
     } else {
-        //res.clearCookie(stateKey);
         var authOptions = spotify.getAuthOptions(code);
 
         request.post(authOptions, function (error, response, body) { //access token request
@@ -118,13 +107,7 @@ app.get('/spotify/callback', function (req, res) {
                     res.redirect(projectUrl + '/spotify');
                 }
                 
-            } else { //response failure
-                //this fucking adds it for no reason im commenting it out I don't care
-                /*res.redirect('/#' +
-                    querystring.stringify({
-                        error: 'invalid_token'
-                    })); //put invalid_token in url*/
-            }
+            } 
         });
     }
 });
@@ -134,7 +117,6 @@ app.get('/spotify/refresh_token', function (req, res) {
 
     // requesting access token from refresh token
     var refresh_token = req.query.refresh_token;
-    //console.log(refresh_token)
     var authOptionsRefresh = spotify.getAuthOptionsRefresh(refresh_token);
 
     request.post(authOptionsRefresh, function (error, response, body) {
@@ -151,8 +133,6 @@ app.get('/spotify/refresh_token', function (req, res) {
 app.post('/machinelearning', function (req, res) {
     console.log("machinelearning")
     var file = req.body.file
-    //console.log(file)
-    //var file = JSON.parse(req.body).file
     machine.main(file, function (label, threshold, confidence, failure) {
         console.log("second " + label)
         res.send({
@@ -164,10 +144,6 @@ app.post('/machinelearning', function (req, res) {
         console.log("sent")
     })
 })
-
-//console.log('Listening on ' + serverPORT);
-//app.createServer(router.handleRequest).listen(serverPORT);
-//app.listen(serverPORT);
 
 //export app for firebase to see and handles requests from url
 exports.app = functions.https.onRequest(app)

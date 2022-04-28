@@ -12,15 +12,13 @@
 // limitations under the License.
 
 // Replace with the key you created at https://cloud.google.com/console
-const GCP_API_KEY = "AIzaSyDN2XoldRX6dmfPa_otQImR74m7u2XGmXQ"
-const GCP_API_KEY_2 = "AIzaSyC_molS5gfyj9ZiBwebAivDzTNYeK0L5V0"
+const GCP_API_KEY = "AIzaSyDN2XoldRX6dmfPa_otQImR74m7u2XGmXQ";
+const GCP_API_KEY_2 = "AIzaSyC_molS5gfyj9ZiBwebAivDzTNYeK0L5V0";
 
 function randomizeKey() {
-  if (GCP_API_KEY_2 && (Math.random() > 0.5)) {
-    //console.log("API KEY 2 at " + new Date())
+  if (GCP_API_KEY_2 && Math.random() > 0.5) {
     return GCP_API_KEY_2;
   }
-  //console.log("API KEY 1 at " + new Date())
-    return GCP_API_KEY;
+  return GCP_API_KEY;
 }
 window.apiKey = randomizeKey();
